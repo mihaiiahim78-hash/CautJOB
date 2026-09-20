@@ -137,4 +137,5 @@ async def pagina_admin(request: Request): return HTMLResponse("<h1>Admin Panel</
 # Rută de urgență pentru confirmarea instantanee Dynamic DNS Google
 @app.get("/google74840c49554d701b.html", response_class=HTMLResponse)
 async def verificare_google_directa():
-    return "google-site-verification: CODUL_COPIAT_DE_LA_GOOGLE"
+    return "google-site-verification: google74840c49554d701b.html"
+
