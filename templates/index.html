@@ -1,180 +1,55 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAUT JOB</title>
+    <!-- Codul tău de verificare de la Google -->
     <meta name="google-site-verification" content="google74840c49554d701b.html">
+    <!-- Codul de bani de la Google AdSense -->
     <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="manifest" href="/static/manifest.json">
-    <meta name="theme-color" content="#4f46e5">
-    <style>
-        .card-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .btn-link { background-color: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; text-decoration: none; text-align: center; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 14px; flex: 1; min-width: 140px; display: inline-block; transition: 0.2s; }
-        .btn-link:hover { background-color: #e2e8f0; }
-        .btn-apply-flex { flex: 1.2; min-width: 160px; }
-        .pagination-container { display: flex; justify-content: center; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
-        .page-link { padding: 8px 14px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s; }
-        .cookie-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); color: white; padding: 16px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; flex-direction: column; gap: 12px; z-index: 9999; font-size: 0.85em; }
-        .cookie-btn { background: #10b981; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="top-bar">
-            <h1>🔍 CAUT JOB</h1>
-        </div>
-        {% if msg == 'success' %}<div class="status-msg success">✓ Recenzia fostului loc de muncă a fost publicată securizat!</div>{% endif %}
-        {% if msg == 'invalid' %}<div class="status-msg error">⚠ Datele introduse sunt invalide! Verifică formatul de e-mail și telefon.</div>{% endif %}
-        <div class="mobile-tabs">
-            <button id="tab-jobs" class="tab-btn active" onclick="schimbaPagina('jobs')">💼 Locuri de Muncă</button>
-            <button id="tab-reviews" class="tab-btn" onclick="schimbaPagina('reviews')">📋 Recenzii Companii</button>
-        </div>
-        <div class="main-layout">
-            <div id="section-left" class="column-left">
-                <form action="/?lang={{ lang }}" method="post" enctype="multipart/form-data" class="search-box">
-                    <div class="form-group">
-                        <label>Ce meserie cauți?</label>
-                        <input type="text" name="q" value="{{ q }}" placeholder="Lăsați gol pentru toate meseriile...">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
+        <h1 style="color:#4f46e5;">🔍 CAUT JOB</h1>
+        
+        <form method="post" style="background:white; padding:20px; border-radius:12px; margin-bottom:20px;">
+            <input type="text" name="q" value="{{ q }}" placeholder="Meserie...">
+            <input type="text" name="locatie" value="{{ locatie }}" placeholder="Oraș...">
+            <button type="submit" style="background:#4f46e5; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer;">Caută Joburi</button>
+        </form>
+
+        <h3>📊 Rezultate active: {{ total_items }}</h3>
+
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div style="flex:1.2; min-width:300px;">
+                {% for job in joburi %}
+                    <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #cbd5e1;">
+                        <h2>{{ job.titlu }} ({{ job.match_score }}% Match)</h2>
+                        <p><strong>🏢 {{ job.companie }}</strong> | 📍 {{ job.location }} | 💰 {{ job.salary }} RON</p>
+                        <p>{{ job.description }}</p>
+                        <a href="{{ job.url_anunt }}" target="_blank" style="display:inline-block; padding:8px; background:#f1f5f9; text-decoration:none; color:black; border-radius:6px; font-weight:bold;">🔗 Vezi Cerințe Originale</a>
+                        <button onclick="alert('✓ CV trimis securizat!')" style="padding:8px; background:#10b981; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🚀 Aplică Rapid</button>
                     </div>
-                    <div class="form-group">
-                        <label>Oraș / Județ</label>
-                        <input type="text" name="locatie" value="{{ locatie }}" placeholder="Ex: Arad, Hunedoara, Timisoara...">
-                    </div>
-                    <div class="form-group">
-                        <label>Încarcă CV (Opțional)</label>
-                        <input type="file" name="cv_file" accept=".pdf,.docx">
-                    </div>
-                    <button type="submit" class="btn-search">Caută Joburi</button>
-                </form>
-                <div class="counter-box">
-                    📊 Rezultate totale găsite național: <strong>{{ total_items }}</strong> (Se afișează 15 per pagină)
-                </div>
-                <div class="results-list">
-                    {% for job in joburi %}
-                        <div class="job-card">
-                            <div class="job-header">
-                                <h2 class="job-title">{{ job.titlu }}</h2>
-                                <span class="match-badge">{{ job.match_score }}% Match</span>
-                            </div>
-                            <div>
-                                {% if job.total_recenzii > 0 %}
-                                    <span class="rating-indicator">⭐ Score Angajator: {{ job.rating_mediu }} / 5 (Din {{ job.total_recenzii }} opinii)</span>
-                                {% else %}
-                                    <span class="rating-indicator no-rev">⭐ Fără recenzii scrise încă</span>
-                                {% endif %}
-                            </div>
-                            <div class="job-meta">
-                                <span class="source-tag">{{ job.sursa }}</span>
-                                <span>🏢 <strong>{{ job.companie }}</strong></span>
-                                <span>📍 {{ job.location }}</span>
-                                {% if job.salary %}<span class="salary">💰 {{ job.salary }} RON</span>{% endif %}
-                            </div>
-                            <p class="job-desc">{{ job.description }}</p>
-                            <div class="card-actions">
-                                <a href="{{ job.url_anunt }}" target="_blank" class="btn-link">🔗 Vezi Cerințele Originale</a>
-                                <button class="btn-apply btn-apply-flex" onclick="alert('✓ Succes! CV-ul tău volatil a fost procesat securizat.')">🚀 Aplică Rapid</button>
-                            </div>
-                        </div>
+                {% endfor %}
+                
+                <div style="margin-top:20px;">
+                    {% for p in range(1, total_pages + 1) %}
+                        <a href="?q={{ q }}&locatie={{ locatie }}&page={{ p }}" style="padding:8px; margin-right:5px; background:white; border:1px solid #cbd5e1; text-decoration:none; font-weight:bold; {% if p == current_page %} background:#4f46e5; color:white; {% endif %}">{{ p }}</a>
                     {% endfor %}
                 </div>
-                <div class="pagination-container">
-                    {% if total_pages > 1 %}
-                        {% for p in range(1, total_pages + 1) %}
-                            <a href="?q={{ q }}&locatie={{ locatie }}&tip={{ tip }}&page={{ p }}" class="page-link" style="{% if p == current_page %} background: #4f46e5; color: white; {% else %} background: white; color: #475569; border: 1px solid #cbd5e1; {% endif %}">{{ p }}</a>
-                        {% endfor %}
-                    {% endif %}
-                </div>
             </div>
-            <div id="section-right" class="column-right">
-                <h2>📋 Ce spun foștii angajați</h2>
-                <p class="subtitle">Registrul de Evidență. Verifică adevărul despre firme înainte să te angajezi:</p>
-                <div class="reviews-scroll-container">
-                    {% for r in toate_recenziile %}
-                        <div class="review-card-item">
-                            <div class="review-card-header">
-                                <strong>🏢 {{ r.companie }}</strong>
-                                <span class="review-date">{{ r.data }}</span>
-                            </div>
-                            <p class="review-text">"{{ r.comentariu }}"</p>
-                            <div class="review-footer-meta">
-                                Rol: <em>{{ r.autor }}</em> | Bani: <strong>{{ r.note_salariu }}/5</strong> | Șefi: <strong>{{ r.note_management }}/5</strong>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <form action="/adauga-recenzie-globala" method="post" class="add-review-form">
-                    <input type="hidden" name="q" value="{{ q }}">
-                    <input type="hidden" name="locatie" value="{{ locatie }}">
-                    <h3>✍️ Spune adevărul despre un fost job</h3>
-                    <input type="text" name="companie" placeholder="Numele Companiei (Ex: Kaufland, Lidl)" required>
-                    <input type="text" name="autor" placeholder="Funcția deținută (Ex: Fost Casier)">
-                    <input type="email" name="mail" placeholder="E-mail privat (Anti-Fraudă)" required>
-                    <input type="tel" name="telefon" placeholder="Număr Telefon (Anti-Răufăcători)" required>
-                    <div class="rating-selectors">
-                        <div class="select-box">
-                            <label>Bani (1-5):</label>
-                            <select name="note_salariu"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select>
-                        </div>
-                        <div class="select-box">
-                            <label>Șefi (1-5):</label>
-                            <select name="note_mgm"><option value="5">5 ★</option><option value="4">4 ★</option><option value="3">3 ★</option><option value="2">2 ★</option><option value="1">1 ★</option></select>
-                        </div>
+
+            <div style="flex:0.8; min-width:280px; background:white; padding:15px; border-radius:12px; border:1px solid #cbd5e1; height:fit-content;">
+                <h3>📋 Ce spun foștii angajați</h3>
+                {% for r in toate_recenziile %}
+                    <div style="padding:10px; border-bottom:1px dashed #cbd5e1;">
+                        <strong>🏢 {{ r.companie }}</strong>: "{{ r.comentariu }}"
                     </div>
-                    <textarea name="comentariu" placeholder="Cum a fost experiența ta de lucru acolo?" rows="2" required></textarea>
-                    <button type="submit" class="btn-submit-review">Publică Recenzia Securizat</button>
-                </form>
+                {% endfor %}
             </div>
         </div>
-        <div id="cookie-banner" class="cookie-banner">
-            <p>🍪 Acest site utilizează module cookie tehnice esențiale pentru stocarea opțiunilor de limbă și securizarea sesiunii de administrare, conform GDPR.</p>
-            <button class="cookie-btn" onclick="acceptaCookies()">Acceptă modulele cookie</button>
-        </div>
-        <footer>
-            <p>© 2026 CAUT JOB. <a href="/admin">⚙️ Control Panel Admin</a></p>
-        </footer>
     </div>
-    <script>
-        function schimbaPagina(tip) {
-            const stanga = document.getElementById('section-left');
-            const dreapta = document.getElementById('section-right');
-            const btnJobs = document.getElementById('tab-jobs');
-            const btnReviews = document.getElementById('tab-reviews');
-            if (tip === 'jobs') {
-                stanga.style.display = 'flex';
-                dreapta.style.display = 'none';
-                btnJobs.classList.add('active');
-                btnReviews.classList.remove('active');
-            } else {
-                stanga.style.display = 'none';
-                dreapta.style.display = 'flex';
-                btnJobs.classList.remove('active');
-                btnReviews.classList.add('active');
-            }
-        }
-        function aplicaOptimizareMobil() {
-            if (window.innerWidth <= 768) {
-                document.getElementById('section-right').style.display = 'none';
-            } else {
-                document.getElementById('section-left').style.display = 'flex';
-                document.getElementById('section-right').style.display = 'flex';
-            }
-        }
-        window.addEventListener('resize', aplicaOptimizareMobil);
-        window.addEventListener('load', aplicaOptimizareMobil);
-        window.addEventListener('load', () => {
-            if (!localStorage.getItem('cookies_acceptate')) {
-                document.getElementById('cookie-banner').style.display = 'flex';
-            }
-        });
-        function acceptaCookies() {
-            localStorage.setItem('cookies_acceptate', 'true');
-            document.getElementById('cookie-banner').style.display = 'none';
-        }
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/static/sw.js').catch(() => {});
-        }
-    </script>
 </body>
 </html>
