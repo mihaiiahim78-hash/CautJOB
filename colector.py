@@ -20,19 +20,16 @@ def genereaza_baza_semantica_extinsa():
     ]
 
 def cauta_joburi_externe(cuvant_cheie="", locatie="", tip_job="Toate"):
-    """Motor masiv cu generare extinsă de peste 500 de rezultate reale."""
     joburi_generate = []
-    
     q_curat = cuvant_cheie.strip().lower() if cuvant_cheie else ""
     l_curat = locatie.strip().capitalize() if (locatie and locatie.lower() != "toate") else ""
-    
     categorii = genereaza_baza_semantica_extinsa()
+    
     marile_orase = ["București", "Cluj-Napoca", "Timișoara", "Arad", "Brașov", "Constanța", "Iași", "Craiova", "Oradea", "Ploiești", "Galați", "Sibiu", "Pitești", "Târgu Mureș", "Hunedoara"]
     surse = ["OLX.ro", "eJobs", "BestJobs", "ANOFM (Baza Oficială)", "Facebook Groups", "LinkedIn RO", "Jooble Aggregator"]
     companii_prefix = ["S.C. Euro", "Global", "Apex", "National", "Vanguard", "Delta", "Trans", "Pro", "Star", "Elite"]
     companii_sufix = ["Logistics", "Retail", "Solutions", "Distribution", "Group", "Engineering", "Services", "Express"]
 
-    # DEBLOCARE VOLUM: Generăm 520 de rezultate unice pentru a umple zeci de pagini!
     factor_volum = 520
 
     for i in range(1, factor_volum + 1):
@@ -45,7 +42,6 @@ def cauta_joburi_externe(cuvant_cheie="", locatie="", tip_job="Toate"):
             skills_anunt = f"{q_curat}, experiență, atestate, seriozitate"
             desc_anunt = f"Angajăm urgent personal calificat pentru postul național de {meserie_anunt} în {locatie_anunt}."
             salariu_baza = 6500 if "sofer" in q_curat else 4600
-            
         elif l_curat and not q_curat:
             locatie_anunt = l_curat
             meserie_structura = categorii[i % len(categorii)]
@@ -53,14 +49,12 @@ def cauta_joburi_externe(cuvant_cheie="", locatie="", tip_job="Toate"):
             skills_anunt = meserie_structura["skills"]
             desc_anunt = f"{meserie_structura['desc']} Poziție deschisă în orașul {l_curat}."
             salariu_baza = meserie_structura["salariu"]
-            
         elif q_curat and l_curat:
             locatie_anunt = l_curat
             meserie_anunt = cuvant_cheie.capitalize()
             skills_anunt = f"{q_curat}, calificare, atenție, echipa"
             desc_anunt = f"Se caută de urgență personal pentru exercitarea funcției de {meserie_anunt} în zona {l_curat}."
             salariu_baza = 5500 if "veterinar" in q_curat else 4500
-            
         else:
             locatie_anunt = marile_orase[i % len(marile_orase)]
             meserie_structura = categorii[i % len(categorii)]
@@ -72,21 +66,16 @@ def cauta_joburi_externe(cuvant_cheie="", locatie="", tip_job="Toate"):
         tip = "Full-time"
         if i % 7 == 0: tip = "Remote"
         elif i % 9 == 0: tip = "Part-time"
-            
-        if tip_job != "Toate" and tip.lower() != tip_job.lower():
-            continue
+        if tip_job != "Toate" and tip.lower() != tip_job.lower(): continue
 
         variatie = (i % 20) * 35
         salariu_final = salariu_baza + variatie
-        
         termen_url = urllib.parse.quote(meserie_anunt.lower())
         locatie_url = urllib.parse.quote(locatie_anunt.lower())
         
         url_anunt_real = f"https://olx.ro{termen_url}/"
-        if sursa == "eJobs":
-            url_anunt_real = f"https://ejobs.ro{locatie_url}/?cautare={termen_url}"
-        elif sursa == "BestJobs":
-            url_anunt_real = f"https://bestjobs.eu{termen_url}&location={locatie_url}"
+        if sursa == "eJobs": url_anunt_real = f"https://ejobs.ro{locatie_url}/?cautare={termen_url}"
+        elif sursa == "BestJobs": url_anunt_real = f"https://bestjobs.eu{termen_url}&location={locatie_url}"
 
         joburi_generate.append({
             "id": i,
@@ -102,5 +91,4 @@ def cauta_joburi_externe(cuvant_cheie="", locatie="", tip_job="Toate"):
             "sursa": sursa,
             "url_anunt": url_anunt_real
         })
-            
     return joburi_generate
