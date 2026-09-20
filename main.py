@@ -40,7 +40,7 @@ def calculeaza_compatibilitate_precisa(text_cv, job, lang):
     procent = 25 
     if not text_cv: return procent, "Introducere de bază. Încarcă fișierul CV."
     abilitati_job = [s.strip().lower() for s in job["skills"].split(",")]
-    abilitati_gasite = [s for s in habilitati_job if s in text_cv and s != ""] if 'habilitati_job' in locals() else [s for s in abilitati_job if s in text_cv and s != ""]
+    abilitati_gasite = [s for s in abilitati_job if s in text_cv and s != ""]
     procent += len(abilitati_gasite) * 20
     return min(max(procent, 25), 100), f"Scor: {procent}% compatibilitate. Abilități: {', '.join(abilitati_gasite)}."
 
