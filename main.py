@@ -134,3 +134,7 @@ async def adauga_recenzie_globala(companie: str = Form(...), autor: str = Form(.
 
 @app.get("/admin", response_class=HTMLResponse)
 async def pagina_admin(request: Request): return HTMLResponse("<h1>Admin Panel</h1>")
+# Rută de urgență pentru confirmarea instantanee Dynamic DNS Google
+@app.get("/google74840c49554d701b.html", response_class=HTMLResponse)
+async def verificare_google_directa():
+    return "google-site-verification: CODUL_COPIAT_DE_LA_GOOGLE"
