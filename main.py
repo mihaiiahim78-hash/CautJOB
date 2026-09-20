@@ -13,8 +13,8 @@ if os.path.exists("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
 
 Baza_Recenzii_Companii = [
-    {"companie": "Kaufland", "autor": "Anonim", "comentariu": "Salariul vine la timp, dar e muncă multă.", "data": "Azi"},
-    {"companie": "Lidl", "autor": "Anonim", "comentariu": "Salarii bune, management strict.", "data": "Ieri"}
+    {"companie": "Kaufland", "autor": "Anonim", "comentariu": "Salariul vine la timp, dar e muncă multă în weekend.", "data": "Azi"},
+    {"companie": "Lidl", "autor": "Anonim", "comentariu": "Salarii bune pe piață, management strict.", "data": "Ieri"}
 ]
 
 @app.get("/", response_class=HTMLResponse)
