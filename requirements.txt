@@ -1,6 +1,2 @@
-fastapi
-uvicorn
-pypdf
-python-docx
-python-multipart
-jinja2
+flask==3.0.3
+gunicorn==21.2.0
