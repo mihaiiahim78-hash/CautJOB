@@ -1,47 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ lang }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAUT JOB</title>
-    <meta name="google-site-verification" content="google74840c49554d701b.html">
-    <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/static/style.css">
+    
+    <!-- GOOGLE SEARCH CONSOLE VERIFICATION -->
+    <meta name="google-site-verification" content="google3f5cc94545f4231" />
+    
+    <title>{{ t.title }}</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 750px; margin: 0 auto; background: white; padding: 35px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .lang-picker { text-align: right; margin-bottom: 20px; }
+        .lang-btn { background: #e2e8f0; color: #4a5568; border: none; padding: 6px 12px; margin-left: 5px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; }
+        .lang-btn.active { background: #3182ce; color: white; }
+        h1 { color: #2d3748; text-align: center; margin-bottom: 5px; }
+        .sub-text { text-align: center; color: #718096; margin-bottom: 30px; font-size: 15px; }
+        .search-box { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        input, button { padding: 14px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 16px; }
+        input:focus { outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(66,153,225,0.5); }
+        button { background-color: #3182ce; color: white; border: none; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        button:hover { background-color: #2b6cb0; }
+        .monetizare-box { text-align: center; padding: 15px; background: #ebf8ff; border-radius: 6px; border: 1px dashed #4299e1; margin-bottom: 30px; }
+        .platform-card { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid #3182ce; padding: 20px; margin-bottom: 15px; border-radius: 4px; transition: transform 0.2s, box-shadow 0.2s; }
+        .platform-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .platform-name { font-size: 18px; font-weight: bold; color: #2d3748; }
+        .platform-desc { font-size: 14px; color: #4a5568; margin: 8px 0 12px 0; }
+        .apply-btn { display: inline-block; padding: 8px 16px; background: #3182ce; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }
+        .apply-btn:hover { background: #2b6cb0; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #3182ce; text-decoration: none; font-weight: bold; }
+        @media(min-width: 480px) { .search-box { flex-direction: row; } input { flex: 2; } button { flex: 1; } }
+    </style>
 </head>
 <body>
-    <div style="max-width: 1100px; margin: 0 auto; padding: 20px; font-family: sans-serif;">
-        <h1 style="color:#4f46e5;">🔍 CAUT JOB</h1>
-        <form method="post" style="background:white; padding:20px; border-radius:12px; margin-bottom:20px;">
-            <input type="text" name="q" value="{{ q }}" placeholder="Meserie...">
-            <input type="text" name="locatie" value="{{ locatie }}" placeholder="Oraș...">
-            <button type="submit" style="background:#4f46e5; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer;">Caută Joburi</button>
-        </form>
-        <h3>📊 Rezultate active: {{ total_items }}</h3>
-        <div style="display:flex; gap:20px; flex-wrap:wrap;">
-            <div style="flex:1.2; min-width:300px;">
-                {% for job in joburi %}
-                    <div style="background:white; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #cbd5e1;">
-                        <h2>{{ job.titlu }} ({{ job.match_score }}% Match)</h2>
-                        <p><strong>🏢 {{ job.companie }}</strong> | 📍 {{ job.location }} | 💰 {{ job.salary }} RON</p>
-                        <p>{{ job.description }}</p>
-                        <a href="{{ job.url_anunt }}" target="_blank" style="display:inline-block; padding:8px; background:#f1f5f9; text-decoration:none; color:black; border-radius:6px; font-weight:bold;">🔗 Vezi Cerințe Originale</a>
-                        <button onclick="alert('✓ CV trimis securizat!')" style="padding:8px; background:#10b981; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🚀 Aplică Rapid</button>
-                    </div>
-                {% endfor %}
-                <div style="margin-top:20px;">
-                    {% for p in range(1, total_pages + 1) %}
-                        <a href="?q={{ q }}&locatie={{ locatie }}&page={{ p }}" style="padding:8px; margin-right:5px; background:white; border:1px solid #cbd5e1; text-decoration:none; font-weight:bold; {% if p == current_page %} background:#4f46e5; color:white; {% endif %}">{{ p }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-            <div style="flex:0.8; min-width:280px; background:white; padding:15px; border-radius:12px; border:1px solid #cbd5e1; height:fit-content;">
-                <h3>📋 Ce spun foștii angajați</h3>
-                {% for r in toate_recenziile %}
-                    <div style="padding:10px; border-bottom:1px dashed #cbd5e1;">
-                        <strong>🏢 {{ r.companie }}</strong>: "{{ r.comentariu }}"
+    <div class="container">
+        <!-- Selectorul Trilingv -->
+        <div class="lang-picker">
+            <a href="?lang=ro{% if cautat %}&q={{ q }}&l={{ l }}{% endif %}" class="lang-btn {% if lang == 'ro' %}active{% endif %}">RO</a>
+            <a href="?lang=en{% if cautat %}&q={{ q }}&l={{ l }}{% endif %}" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
+            <a href="?lang=hu{% if cautat %}&q={{ q }}&l={{ l }}{% endif %}" class="lang-btn {% if lang == 'hu' %}active{% endif %}">HU</a>
+        </div>
+
+        {% if cautat %}
+            <a href="/?lang={{ lang }}" class="back-link">{{ t.back }}</a>
+            <h1>{{ t.results_for }} "{{ q }}" {{ t.in }} {{ l if l else t.all_platforms }}</h1>
+            <p class="sub-text">{{ t.click_to_see }}</p>
+            
+            <!-- Afișarea Rutelor Către Toate Joburile Reale Extrase Din Toate Platformele -->
+            <div>
+                {% for p in platforme %}
+                    <div class="platform-card">
+                        <div class="platform-name">{{ p.nume }}</div>
+                        <div class="platform-desc">{{ p.desc }}</div>
+                        <a href="{{ p.url }}" target="_blank" class="apply-btn">{{ t.search_btn }} →</a>
                     </div>
                 {% endfor %}
             </div>
+        {% else %}
+            <h1>{{ t.title }}</h1>
+            <p class="sub-text">{{ t.sub }}</p>
+            
+            <form action="/cauta" method="GET" class="search-box">
+                <input type="hidden" name="lang" value="{{ lang }}">
+                <input type="text" name="q" placeholder="{{ t.placeholder_q }}" required>
+                <input type="text" name="l" placeholder="{{ t.placeholder_l }}">
+                <button type="submit">{{ t.search_btn }}</button>
+            </form>
+        {% endif %}
+
+        <!-- Caseta Monetizare Proiect Internațional -->
+        <div class="monetizare-box">
+            <p>{{ t.support }}</p>
+            <a href="https://buymeacoffee.com" target="_blank" style="font-weight:bold; color:#dd6b20; text-decoration:none;">{{ t.coffee }}</a>
         </div>
     </div>
 </body>
