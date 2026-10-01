@@ -4,90 +4,90 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# Dicționarul de traduceri pentru cele 3 limbi (Interfață Internațională)
+# Dicționarul de traduceri (Interfață Internațională)
 TRANSLATIONS = {
     'ro': {
         'title': "Caut Job - Motor Internațional de Căutare",
         'search_btn': "Caută Joburi",
-        'placeholder_q': "Meserie sau cuvânt cheie (ex: Șofer, Programator)...",
-        'placeholder_l': "Oraș sau Țară...",
+        'placeholder_q': "Meserie sau cuvânt cheie (ex: Șofer, Casier)...",
+        'placeholder_l': "Oraș sau Țară (ex: Arad, Timișoara)...",
         'sub': "Sistem centralizat de căutare globală în timp real.",
-        'support': "☕ Îți place aplicația? Susține proiectul internațional!",
-        'coffee': "Cumpără-mi o cafea ☕",
-        'results_for': "Rezultate externe generate pentru",
-        'in': "în",
+        'unlock_title': "🔓 Deblochează Toate Rezultatele Reale (Zeci de Pagini)",
+        'unlock_desc': "Plătește o singură dată 2 LEI pentru a accesa instant absolut toate locurile de muncă live din baza de date a celor mai mari platforme.",
+        'pay_btn': "💳 Plătește 2 LEI cu Card / Google Pay",
         'click_to_see': "Apasă pe platforma dorită pentru a accesa instant toate joburile live:",
-        'back': "← Înapoi",
-        'all_platforms': "Toate platformele active"
+        'results_for': "Rezultate generate pentru",
+        'in': "în",
+        'back': "← Înapoi"
     },
     'en': {
         'title': "Job Search - International Search Engine",
         'search_btn': "Search Jobs",
-        'placeholder_q': "Job title or keyword (ex: Driver, Developer)...",
+        'placeholder_q': "Job title or keyword (ex: Driver, Accountant)...",
         'placeholder_l': "City or Country...",
         'sub': "Centralized global real-time search system.",
-        'support': "☕ Like this app? Support this international project!",
-        'coffee': "Buy me a coffee ☕",
-        'results_for': "External results generated for",
-        'in': "in",
+        'unlock_title': "🔓 Unlock All Real Results (Dozens of Pages)",
+        'unlock_desc': "Pay once 2 RON (approx. 0.40 EUR) to instantly access absolutely all live jobs from the biggest platforms.",
+        'pay_btn': "💳 Secure Pay with Card / Google Pay",
         'click_to_see': "Click on your preferred platform to instantly access all live jobs:",
-        'back': "← Back",
-        'all_platforms': "All active platforms"
+        'results_for': "Results generated for",
+        'in': "in",
+        'back': "← Back"
     },
     'hu': {
         'title': "Álláskereső - Nemzetközi Keresőmotor",
         'search_btn': "Állások Keresése",
-        'placeholder_q': "Szakma vagy kulcsszó (pl: Sofőr, Programozó)...",
+        'placeholder_q': "Szakma vagy kulcsszó (pl: Sofőr, Pénztáros)...",
         'placeholder_l': "Város vagy Ország...",
         'sub': "Központosított globális valós idejű keresőrendszer.",
-        'support': "☕ Tetszik az alkalmazás? Támogasd a nemzetközi projektet!",
-        'coffee': "Vegyél nekem egy kávét ☕",
-        'results_for': "Külső találatok generálva a következőre",
-        'in': "itt:",
+        'unlock_title': "🔓 Minden Valós Találat Feloldása (Több Oldal)",
+        'unlock_desc': "Fizessen egyszer 2 RON-t az összes élő állás azonnali eléréséhez a legnagyobb platformokról.",
+        'pay_btn': "💳 Biztonságos Fizetés Kártyával",
         'click_to_see': "Kattints a kívánt platformra az élő állások azonnali eléréséhez:",
-        'back': "← Vissza",
-        'all_platforms': "Minden aktív platform"
+        'results_for': "Találatok a következőre:",
+        'in': "itt:",
+        'back': "← Vissza"
     }
 }
 
 def genereaza_linkuri_platforme(q, l):
-    """Construiește URL-urile de căutare live pentru absolut toate joburile de pe platforme."""
-    q_encoded = urllib.parse.quote(q.strip())
-    l_encoded = urllib.parse.quote(l.strip())
+    """Construiește URL-urile reale de căutare dinamică."""
+    q_curat = q.strip().lower()
+    l_curat = l.strip().lower()
     
-    locatie_olx = l_encoded if l.strip() else ""
+    # Encodare pentru URL (înlocuiește spațiile cu caractere speciale de link)
+    q_encoded = urllib.parse.quote(q_curat)
+    l_encoded = urllib.parse.quote(l_curat)
     
+    # 1. Logică OLX
+    if l_curat:
+        url_olx = f"https://olx.ro{l_encoded}/q-{q_encoded}/"
+    else:
+        url_olx = f"https://olx.roq-{q_encoded}/"
+        
+    # 2. Logică eJobs
+    if l_curat:
+        url_ejobs = f"https://ejobs.ro{l_encoded}/{q_encoded}/"
+    else:
+        url_ejobs = f"https://ejobs.ro{q_encoded}/"
+        
+    # 3. Logică BestJobs
+    if l_curat:
+        url_bestjobs = f"https://bestjobs.eu{q_encoded}&location={l_encoded}"
+    else:
+        url_bestjobs = f"https://bestjobs.eu{q_encoded}"
+        
+    # 4. Logică Publi24
+    if l_curat:
+        url_publi24 = f"https://publi24.ro{l_encoded}/?q={q_encoded}"
+    else:
+        url_publi24 = f"https://publi24.ro?q={q_encoded}"
+
     return [
-        {
-            "nume": "OLX Jobs (România & Internațional)",
-            "url": f"https://olx.ro{q_encoded}/" if not l.strip() else f"https://olx.ro{locatie_olx}/q-{q_encoded}/",
-            "desc": "Accesează baza completă de joburi operaționale, șoferi, retail și servicii."
-        },
-        {
-            "nume": "eJobs (Național & Remote)",
-            "url": f"https://ejobs.ro{q_encoded}/" if not l.strip() else f"https://ejobs.ro{l_encoded}/{q_encoded}/",
-            "desc": "Toate pozițiile de specialiști, management și joburi de birou active."
-        },
-        {
-            "nume": "BestJobs (European & Global)",
-            "url": f"https://bestjobs.eu{q_encoded}" if not l.strip() else f"https://bestjobs.eu{q_encoded}&location={l_encoded}",
-            "desc": "Locuri de muncă în corporații internaționale și oportunități în Uniunea Europeană."
-        },
-        {
-            "nume": "EuroJobs (Aplicație Internațională)",
-            "url": f"https://eurojobs.com{q_encoded}",
-            "desc": "Platformă globală dedicată joburilor transfrontaliere în toată Europa și SUA."
-        },
-        {
-            "nume": "LinkedIn Job Search",
-            "url": f"https://linkedin.com{q_encoded}&location={l_encoded if l.strip() else 'Worldwide'}",
-            "desc": "Cea mai mare rețea profesională din lume pentru joburi tech și corporații."
-        },
-        {
-            "nume": "Jooble (Agregator Global de Joburi)",
-            "url": f"https://jooble.org{q_encoded}" if not l.strip() else f"https://jooble.org{q_encoded}&rgn={l_encoded}",
-            "desc": "Agreghează în timp real absolut toate anunțurile de pe site-urile de recrutare mici."
-        }
+        {"nume": "OLX Locuri de Muncă", "url": url_olx, "desc": f"Toate anunțurile live de pe OLX pentru {q} în {l if l else 'Toată România'} (Zeci de pagini reale)."},
+        {"nume": "eJobs România", "url": url_ejobs, "desc": f"Poziții active, salarii transparente și companii de top care angajează în {l if l else 'România'}."},
+        {"nume": "BestJobs", "url": url_bestjobs, "desc": f"Locuri de muncă din toate domeniile disponibile acum în {l if l else 'țară'}."},
+        {"nume": "Publi24 - Locuri de Muncă", "url": url_publi24, "desc": f"Anunțuri directe de la angajatori locali, fără intermediari, în {l if l else 'România'}."}
     ]
 
 @app.route('/')
@@ -95,23 +95,16 @@ def home():
     lang = request.args.get('lang', 'ro')
     if lang not in TRANSLATIONS:
         lang = 'ro'
-    return render_template('index.html', t=TRANSLATIONS[lang], lang=lang, cautat=False, q="", l="")
-
-@app.route('/cauta')
-def cauta():
-    lang = request.args.get('lang', 'ro')
-    if lang not in TRANSLATIONS:
-        lang = 'ro'
         
     cuvant_cheie = request.args.get('q', '')
     locatie = request.args.get('l', '')
     
-    if not cuvant_cheie.strip():
-        return render_template('index.html', t=TRANSLATIONS[lang], lang=lang, cautat=False, q="", l="")
+    # Dacă utilizatorul a completat căutarea
+    if cuvant_cheie.strip():
+        platforme = genereaza_linkuri_platforme(cuvant_cheie, locatie)
+        return render_template('index.html', t=TRANSLATIONS[lang], lang=lang, cautat=True, q=cuvant_cheie, l=locatie, platforme=platforme)
         
-    platforme = genereaza_linkuri_platforme(cuvant_cheie, locatie)
-    
-    return render_template('index.html', t=TRANSLATIONS[lang], lang=lang, cautat=True, q=cuvant_cheie, l=locatie, platforme=platforme)
+    return render_template('index.html', t=TRANSLATIONS[lang], lang=lang, cautat=False, q="", l="")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
