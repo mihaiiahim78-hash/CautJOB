@@ -24,7 +24,7 @@
         .stripe-btn { display: inline-block; padding: 15px 30px; background-color: #28a745; color: white; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; }
         .stripe-btn:hover { background-color: #218838; }
         
-        .platform-card { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid #28a745; padding: 20px; margin-bottom: 15px; border-radius: 4px; }
+        .platform-card { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid #28a745; padding: 20px; margin-bottom: 15px; border-radius: 4px; text-align: left; }
         .platform-name { font-size: 18px; font-weight: bold; color: #2d3748; }
         .platform-desc { font-size: 14px; color: #4a5568; margin: 8px 0 12px 0; }
         .apply-btn { display: inline-block; padding: 8px 16px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }
@@ -34,7 +34,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Schimbătorul de limbi -->
+        <!-- Selector limbi -->
         <div class="lang-picker">
             <a href="?lang=ro{% if cautat %}&q={{ q }}&l={{ l }}{% endif %}" class="lang-btn {% if lang == 'ro' %}active{% endif %}">RO</a>
             <a href="?lang=en{% if cautat %}&q={{ q }}&l={{ l }}{% endif %}" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
@@ -43,19 +43,18 @@
 
         {% if cautat %}
             <a href="/?lang={{ lang }}" class="back-link">{{ t.back }}</a>
-            <h1>{{ t.results_for }} "{{ q }}" {{ t.in }} {{ l if l else "România" }}</h1>
+            <h1>{{ t.results_for }} "{{ q if q else 'Toate joburile' }}" {{ t.in }} {{ l if l else "România" }}</h1>
             
-            <!-- ZIDUL DE PLATĂ MULTI-LIMBĂ DE 2 LEI -->
+            <!-- ZIDUL DE PLATĂ DE 2 LEI -->
             <div id="paywall" class="paywall-box">
                 <h2>{{ t.unlock_title }}</h2>
                 <p style="font-size: 16px; color: #4a5568;">{{ t.unlock_desc }}</p>
                 <div class="price-tag">2.00 RON</div>
                 
-                <!-- Pune link-ul tău de plată Stripe de 2 lei în loc de # în interiorul href -->
                 <a href="#" target="_blank" onclick="arataRezultate()" class="stripe-btn">{{ t.pay_btn }}</a>
             </div>
 
-            <!-- REZULTATELE GENERATE SECURE (SUNT ASCUNSE PÂNĂ CÂND SE DA CLICK PE PLATĂ) -->
+            <!-- REZULTATE GENERATE AUTOMAT (ASCUNSE PÂNĂ LA CLICK DE PLATĂ) -->
             <div id="job-results" style="display: none; margin-top: 25px;">
                 <p class="sub-text" style="text-align: left; font-weight: bold;">{{ t.click_to_see }}</p>
                 {% for p in platforme %}
@@ -69,8 +68,6 @@
 
             <script>
                 function arataRezultate() {
-                    // În producție, Stripe va trimite utilizatorul înapoi pe o pagină de succes, 
-                    // dar pentru testul tău imediat, dând click pe plată se vor debloca butoanele live dedesubt.
                     document.getElementById('paywall').style.display = 'none';
                     document.getElementById('job-results').style.display = 'block';
                 }
@@ -80,9 +77,10 @@
             <h1>{{ t.title }}</h1>
             <p class="sub-text">{{ t.sub }}</p>
             
+            <!-- FORMULARUL DE CĂUTARE MODIFICAT (fără parametrul required la job) -->
             <form action="/" method="GET" class="search-box">
                 <input type="hidden" name="lang" value="{{ lang }}">
-                <input type="text" name="q" placeholder="{{ t.placeholder_q }}" required>
+                <input type="text" name="q" placeholder="{{ t.placeholder_q }}">
                 <input type="text" name="l" placeholder="{{ t.placeholder_l }}">
                 <button type="submit">{{ t.search_btn }}</button>
             </form>
