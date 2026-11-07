@@ -4,64 +4,61 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# Dicționarul de traduceri oficial pentru JobiQ (Trilingv)
+# Dicționarul de traduceri pentru interfața JobiQ (Trilingv)
 TRANSLATIONS = {
     'ro': {
-        'title': "JobiQ - Motor Inteligent de Căutare Locuri de Muncă",
+        'title': "JobiQ - Motor Internațional de Căutare Locuri de Muncă",
         'search_btn': "Scanează Joburi",
         'placeholder_q': "Meserie (ex: Șofer, Casier, Mecanic)...",
         'placeholder_l': "Oraș (ex: Arad, Deva, Pitești) sau lasă gol...",
-        'sub': "Aplicație inteligentă care agreghează mii de rezultate reale.",
-        'unlock_title': "🔓 Accesează Rezultatele Reale din Toate Platformele",
-        'unlock_desc': "Plătește o singură dată 2 LEI pentru a debloca accesul instant la zeci de pagini live din surse oficiale (OLX, eJobs, BestJobs, Publi24).",
-        'pay_btn': "💳 Plătește 2 LEI și Vezi Joburile",
-        'click_to_see': "Apasă pe platforma dorită pentru a deschide toate paginile cu joburi reale:",
+        'sub': "Scanează în timp real zeci de pagini de rezultate din platformele oficiale.",
+        'click_to_see': "Apasă pe platforma dorită pentru a accesa TOATE joburile live (fără limită de pagini):",
+        'results_for': "Rezultate pentru",
+        'in': "în",
         'back': "← Înapoi la căutare"
     },
     'en': {
         'title': "JobiQ - Smart Search Engine for Live Jobs",
         'search_btn': "Scan Jobs",
-        'placeholder_q': "Job title (ex: Driver, Cashier, Mechanic)...",
-        'placeholder_l': "City or leave empty for all country...",
-        'sub': "Smart application aggregating thousands of live result pages.",
-        'unlock_title': "🔓 Access Real Results From All Platforms",
-        'unlock_desc': "Pay once 2 RON to instantly unlock access to thousands of live ads from official sources.",
-        'pay_btn': "💳 Pay 2 RON & View Jobs",
-        'click_to_see': "Click on your preferred platform to open all real job pages:",
+        'placeholder_q': "Job title (ex: Driver, Cashier)...",
+        'placeholder_l': "City or region (or leave empty)...",
+        'sub': "Scans dozens of live result pages from official platforms in real time.",
+        'click_to_see': "Click on your preferred platform to access ALL live jobs (unlimited pages):",
+        'results_for': "Results for",
+        'in': "in",
         'back': "← Back to search"
     },
     'hu': {
         'title': "JobiQ - Intelligens Álláskereső Keresőmotor",
         'search_btn': "Állások Szkennelése",
         'placeholder_q': "Szakma (pl: Sofőr, Pénztáros)...",
-        'placeholder_l': "Város vagy hagyd üresen...",
-        'sub': "Intelligens alkalmazás, amely több tucat élő találati oldalt gyűjt össze.",
-        'unlock_title': "🔓 Valós Találatok Feloldása Minden Platformról",
-        'unlock_desc': "Fizessen egyszer 2 RON-t a hivatalos forrásokból származó élő hirdetések azonnali eléréséhez.",
-        'pay_btn': "💳 Fizessen 2 RON-t az Állásokért",
-        'click_to_see': "Kattintson a kívánt platformra a valós állások megtekintéséhez:",
+        'placeholder_l': "Város vagy régió (vagy hagyd üresen)...",
+        'sub': "Valós időben pásztázza a hivatalos platformok álláshirdetéseit.",
+        'click_to_see': "Kattintson a kívánt platformra az ÖSSZES élő állás megtekintéséhez (korlátlan oldal):",
+        'results_for': "Találatok a következőre:",
+        'in': "itt:",
         'back': "← Vissza a kereséshez"
     }
 }
 
 def genereaza_linkuri_realetime(q, l):
-    """Construiește URL-urile exacte de căutare dinamică."""
-    q_curat = q.strip().lower()
-    l_curat = l.strip().lower()
+    q_curat = q.strip().lower() if q else ""
+    l_curat = l.strip().lower() if l else ""
     
     q_encoded = urllib.parse.quote(q_curat)
     l_encoded = urllib.parse.quote(l_curat)
     
+    # URL-urile oficiale care conțin TOATE paginile existente pe platforme
     url_olx = f"https://olx.ro{l_encoded}/q-{q_encoded}/" if l_curat else f"https://olx.roq-{q_encoded}/"
     url_ejobs = f"https://ejobs.ro{l_encoded}/{q_encoded}/" if l_curat else f"https://ejobs.ro{q_encoded}/"
     url_bestjobs = f"https://bestjobs.eu{q_encoded}&location={l_encoded}" if l_curat else f"https://bestjobs.eu{q_encoded}"
     url_publi24 = f"https://publi24.ro{l_encoded}/?q={q_encoded}" if l_curat else f"https://publi24.ro?q={q_encoded}"
 
     return [
-        {"nume": "OLX Locuri de Muncă (Toate Paginile)", "url": url_olx, "desc": f"Deschide direct pe OLX zecile de pagini cu anunțuri de {q if q else 'orice job'} în {l if l else 'Toată România'}."},
-        {"nume": "eJobs România (Live)", "url": url_ejobs, "desc": f"Baza completă de date eJobs sortată pentru {q if q else 'toate domeniile'} în {l if l else 'toată țara'}."},
-        {"nume": "BestJobs", "url": url_bestjobs, "desc": f"Anunțuri de angajare în timp real din rețeaua BestJobs în {l if l else 'România'}."},
-        {"nume": "Publi24 Jobs", "url": url_publi24, "desc": f"Locuri de muncă adăugate direct de angajatori din zona {l if l else 'României'}."}
+        {"nume": "OLX Locuri de Muncă (Mii de anunțuri)", "url": url_olx, "desc": f"Deschide direct pe OLX absolut toate paginile cu rezultate reale."},
+        {"nume": "eJobs România (Live)", "url": url_ejobs, "desc": f"Baza oficială eJobs în timp real, completă."},
+        {"nume": "BestJobs Europe", "url": url_bestjobs, "desc": f"Toate pozițiile active disponibile din rețeaua BestJobs."},
+        {"nume": "Publi24 Jobs", "url": url_publi24, "desc": f"Anunțuri directe de la angajatori, paginate integral."}
     ]
 
 @app.route('/')
@@ -73,7 +70,6 @@ def home():
     cuvant_cheie = request.args.get('q', '')
     locatie = request.args.get('l', '')
     
-    # Rulăm dacă utilizatorul a introdus MĂCAR una din opțiuni (job sau oraș)
     if cuvant_cheie.strip() or locatie.strip():
         platforme = genereaza_linkuri_realetime(cuvant_cheie, locatie)
         return render_template('index.html', t=TRANSLATIONS[lang], lang=lang, cautat=True, q=cuvant_cheie, l=locatie, platforme=platforme)
