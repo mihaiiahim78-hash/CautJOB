@@ -48,8 +48,8 @@ TRANSLATIONS = {
 
 def genereaza_linkuri_realetime(q, l):
     """Construiește URL-urile exacte de căutare dinamică."""
-    q_curat = q.strip().lower() if q else ""
-    l_curat = l.strip().lower() if l else ""
+    q_curat = str(q).strip().lower() if q else ""
+    l_curat = str(l).strip().lower() if l else ""
     
     q_encoded = urllib.parse.quote(q_curat)
     l_encoded = urllib.parse.quote(l_curat)
@@ -60,10 +60,10 @@ def genereaza_linkuri_realetime(q, l):
     url_publi24 = f"https://publi24.ro{l_encoded}/?q={q_encoded}" if l_curat else f"https://publi24.ro?q={q_encoded}"
 
     return [
-        {"nume": "OLX Locuri de Muncă (Toate Paginile)", "url": url_olx, "desc": f"Deschide direct pe OLX zecile de pagini cu anunțuri reale."},
-        {"nume": "eJobs România (Live)", "url": url_ejobs, "desc": f"Baza completă de date eJobs sortată instant."},
-        {"nume": "BestJobs", "url": url_bestjobs, "desc": f"Anunțuri de angajare în timp real din rețeaua BestJobs."},
-        {"nume": "Publi24 Jobs", "url": url_publi24, "desc": f"Locuri de muncă adăugate direct de angajatori."}
+        {"nume": "OLX Locuri de Muncă (Toate Paginile)", "url": url_olx, "desc": "Deschide direct pe OLX zecile de pagini cu anunțuri reale."},
+        {"nume": "eJobs România (Live)", "url": url_ejobs, "desc": "Baza completă de date eJobs sortată instant."},
+        {"nume": "BestJobs", "url": url_bestjobs, "desc": "Anunțuri de angajare în timp real din rețeaua BestJobs."},
+        {"nume": "Publi24 Jobs", "url": url_publi24, "desc": "Locuri de muncă adăugate direct de angajatori."}
     ]
 
 @app.route('/')
@@ -72,12 +72,12 @@ def home():
     if lang not in TRANSLATIONS:
         lang = 'ro'
         
+    # Citim parametrii folosind o metodă sigură care nu blochează serverul (default gol dacă lipsesc)
     cuvant_cheie = request.args.get('q', '')
     locatie = request.args.get('l', '')
     
-    # Corectat: Verificăm stringurile primite din request
-    if cuvant_cheie.strip() or locatie.strip():
-        # Corectat: Trimitem variabilele curățate corect către generatorul de linkuri
+    # Procesăm dacă utilizatorul a introdus text sau a trimis o căutare
+    if 'q' in request.args or 'l' in request.args:
         platforme = genereaza_linkuri_realetime(cuvant_cheie, locatie)
         return render_template('index.html', t=TRANSLATIONS[lang], lang=lang, cautat=True, q=cuvant_cheie, l=locatie, platforme=platforme)
         
