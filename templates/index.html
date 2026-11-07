@@ -19,15 +19,11 @@
         button { background-color: #3182ce; color: white; border: none; cursor: pointer; font-weight: bold; transition: background 0.2s; }
         button:hover { background-color: #2b6cb0; }
         
-        .paywall-box { text-align: center; padding: 30px; background: #fff5f5; border-radius: 8px; border: 2px solid #feb2b2; margin-top: 20px; }
-        .price-tag { font-size: 32px; font-weight: bold; color: #c53030; margin: 15px 0; }
-        .stripe-btn { display: inline-block; padding: 15px 30px; background-color: #28a745; color: white; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; }
-        .stripe-btn:hover { background-color: #218838; }
-        
-        .platform-card { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid #28a745; padding: 20px; margin-bottom: 15px; border-radius: 4px; text-align: left; }
+        .platform-card { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid #3182ce; padding: 20px; margin-bottom: 15px; border-radius: 4px; text-align: left; }
         .platform-name { font-size: 18px; font-weight: bold; color: #2d3748; }
         .platform-desc { font-size: 14px; color: #4a5568; margin: 8px 0 12px 0; }
-        .apply-btn { display: inline-block; padding: 8px 16px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }
+        .apply-btn { display: inline-block; padding: 8px 16px; background: #3182ce; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }
+        .apply-btn:hover { background-color: #2b6cb0; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #3182ce; text-decoration: none; font-weight: bold; }
         @media(min-width: 480px) { .search-box { flex-direction: row; } input { flex: 2; } button { flex: 1; } }
     </style>
@@ -44,19 +40,10 @@
         {% if cautat %}
             <a href="/?lang={{ lang }}" class="back-link">{{ t.back }}</a>
             <h1>{{ t.results_for }} "{{ q if q else 'Toate joburile' }}" {{ t.in }} {{ l if l else "România" }}</h1>
-            
-            <!-- ZIDUL DE PLATĂ DE 2 LEI -->
-            <div id="paywall" class="paywall-box">
-                <h2>{{ t.unlock_title }}</h2>
-                <p style="font-size: 16px; color: #4a5568;">{{ t.unlock_desc }}</p>
-                <div class="price-tag">2.00 RON</div>
-                
-                <a href="#" target="_blank" onclick="arataRezultate()" class="stripe-btn">{{ t.pay_btn }}</a>
-            </div>
+            <p class="sub-text" style="text-align: left; font-weight: bold; margin-top: 20px;">{{ t.click_to_see }}</p>
 
-            <!-- REZULTATE GENERATE AUTOMAT (ASCUNSE PÂNĂ LA CLICK DE PLATĂ) -->
-            <div id="job-results" style="display: none; margin-top: 25px;">
-                <p class="sub-text" style="text-align: left; font-weight: bold;">{{ t.click_to_see }}</p>
+            <!-- REZULTATELE APAR ACUM INSTANT, FĂRĂ PLATĂ -->
+            <div style="margin-top: 15px;">
                 {% for p in platforme %}
                     <div class="platform-card">
                         <div class="platform-name">{{ p.nume }}</div>
@@ -66,18 +53,10 @@
                 {% endfor %}
             </div>
 
-            <script>
-                function arataRezultate() {
-                    document.getElementById('paywall').style.display = 'none';
-                    document.getElementById('job-results').style.display = 'block';
-                }
-            </script>
-
         {% else %}
             <h1>{{ t.title }}</h1>
             <p class="sub-text">{{ t.sub }}</p>
             
-            <!-- FORMULARUL DE CĂUTARE MODIFICAT (fără parametrul required la job) -->
             <form action="/" method="GET" class="search-box">
                 <input type="hidden" name="lang" value="{{ lang }}">
                 <input type="text" name="q" placeholder="{{ t.placeholder_q }}">
