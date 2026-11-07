@@ -29,7 +29,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Selector limbi -->
         <div class="lang-picker">
             <a href="?lang=ro{% if cautat %}&q={{ q }}&l={{ l }}{% endif %}" class="lang-btn {% if lang == 'ro' %}active{% endif %}">RO</a>
             <a href="?lang=en{% if cautat %}&q={{ q }}&l={{ l }}{% endif %}" class="lang-btn {% if lang == 'en' %}active{% endif %}">EN</a>
@@ -46,7 +45,6 @@
                     <div class="platform-card">
                         <div class="platform-name">{{ p.nume }}</div>
                         <div class="platform-desc">{{ p.desc }}</div>
-                        <!-- Link direct securizat care forțează deschiderea în browserul nativ din orice sistem mobil -->
                         <a href="{{ p.url }}" rel="external" target="_system" class="apply-btn">Deschide Anunțurile Reale →</a>
                     </div>
                 {% endfor %}
@@ -58,8 +56,8 @@
             
             <form action="/" method="GET" class="search-box">
                 <input type="hidden" name="lang" value="{{ lang }}">
-                <input type="text" name="q" placeholder="{{ t.placeholder_q }}">
-                <input type="text" name="l" placeholder="{{ t.placeholder_l }}">
+                <input type="text" name="q" value="{{ q }}" placeholder="{{ t.placeholder_q }}">
+                <input type="text" name="l" value="{{ l }}" placeholder="{{ t.placeholder_l }}">
                 <button type="submit">{{ t.search_btn }}</button>
             </form>
         {% endif %}
