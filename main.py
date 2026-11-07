@@ -9,7 +9,7 @@ TRANSLATIONS = {
         'title': "JobiQ - Motor Inteligent de Căutare",
         'search_btn': "Scanează Joburi",
         'placeholder_q': "Meserie (ex: Șofer, Casier, Mecanic)...",
-        'placeholder_l': "Oraș (ex: Arad, Deva, Pitești) sau lasă gol...",
+        'placeholder_l': "Oraș (ex: Arad, Orșova, Pitești) sau lasă gol...",
         'sub': "Aplicație inteligentă care agreghează mii de rezultate reale.",
         'click_to_see': "Apasă pe platforma dorită pentru a deschide toate paginile cu joburi reale:",
         'results_for': "Rezultate pentru",
@@ -33,6 +33,7 @@ TRANSLATIONS = {
         'placeholder_q': "Szakma (pl: Sofőr, Pénztáros)...",
         'placeholder_l': "Város vagy régió...",
         'sub': "Intelligens alkalmazás, amely több tucat élő találati oldalt gyűjt össze.",
+        'unlock_title': "🔓 Valós Találatok Feloldása Minden Platformról",
         'click_to_see': "Kattintson a kívánt platformra a valós állások megtekintéséhez:",
         'results_for': "Találatok a következőre:",
         'in': "itt:",
@@ -113,10 +114,17 @@ def genereaza_linkuri_realetime(q, l):
     q_encoded = urllib.parse.quote(q_curat)
     l_encoded = urllib.parse.quote(l_curat)
     
-    url_olx = f"https://olx.ro{l_encoded}/q-{q_encoded}/" if l_curat else f"https://olx.roq-{q_encoded}/"
-    url_ejobs = f"https://ejobs.ro{l_encoded}/{q_encoded}/" if l_curat else f"https://ejobs.ro{q_encoded}/"
-    url_bestjobs = f"https://bestjobs.eu{q_encoded}&location={l_encoded}" if l_curat else f"https://bestjobs.eu{q_encoded}"
-    url_publi24 = f"https://publi24.ro{l_encoded}/?q={q_encoded}" if l_curat else f"https://publi24.ro?q={q_encoded}"
+    # STRUCTURA REPARATĂ: Adăugat explicit '/' după domeniu pentru a preveni lipirea cuvintelor
+    if l_curat:
+        url_olx = f"https://olx.ro{l_encoded}/q-{q_encoded}/"
+        url_ejobs = f"https://ejobs.ro{l_encoded}/{q_encoded}/"
+        url_bestjobs = f"https://bestjobs.eu{q_encoded}&location={l_encoded}"
+        url_publi24 = f"https://publi24.ro{l_encoded}/?q={q_encoded}"
+    else:
+        url_olx = f"https://olx.roq-{q_encoded}/"
+        url_ejobs = f"https://ejobs.ro{q_encoded}/"
+        url_bestjobs = f"https://bestjobs.eu{q_encoded}"
+        url_publi24 = f"https://publi24.ro?q={q_encoded}"
 
     return [
         {"nume": "OLX Locuri de Muncă (Toate Paginile)", "url": url_olx, "desc": "Deschide direct pe OLX zecile de pagini cu anunțuri reale."},
