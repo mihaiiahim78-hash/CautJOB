@@ -6,7 +6,6 @@
     <meta name="google-site-verification" content="google3f5cc94545f4231" />
     <title id="page-title">JobiQ - Motor Inteligent de Căutare Joburi & Recenzii</title>
     <script src="https://jsdelivr.net"></script>
-    <script async src="https://google.com"></script>
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 15px; color: #2d3748; }
@@ -22,9 +21,14 @@
         .tab-btn.active { border-color: #3182ce; background: #ebf8ff; color: #2b6cb0; }
         
         h1 { color: #1a202c; text-align: center; margin: 0 0 8px 0; font-size: 24px; }
-        .sub-text { text-align: center; color: #718096; margin-bottom: 25px; font-size: 15px; }
+        .sub-text { text-align: center; color: #718096; margin-bottom: 20px; font-size: 15px; }
         
-        .search-wrapper { background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        .search-wrapper { background: #f8fafc; padding: 18px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; min-height: 90px; }
+        .quick-search { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .quick-search input { flex: 1; min-width: 180px; padding: 12px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 15px; }
+        .quick-search button { padding: 12px 20px; background: #3182ce; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .quick-search button:hover { background: #2b6cb0; }
+        
         .ad-slot { background: #f7fafc; border: 1px dashed #cbd5e0; color: #a0aec0; text-align: center; padding: 12px; font-size: 12px; border-radius: 6px; margin: 18px 0; }
         
         .review-form, .review-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
@@ -33,7 +37,6 @@
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 15px; font-family: inherit; }
         .btn-primary { background: #3182ce; color: white; border: none; padding: 13px 22px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; }
-        .btn-primary:hover { background: #2b6cb0; }
         .btn-green { background: #2f855a; }
         .btn-green:hover { background: #276749; }
         
@@ -73,7 +76,14 @@
             <p class="sub-text" id="t-sub">Scrie meseria și orașul (ex: Șofer Arad, Casier București) și accesează direct anunțurile individuale de pe OLX, eJobs, BestJobs, Publi24 și ANOFM.</p>
             
             <div class="search-wrapper">
-                <div class="gcse-search" data-enableHistory="true" data-autoSearchOnLoad="false"></div>
+                <!-- Bara de cautare rapida conectata la motorul JobiQ -->
+                <form onsubmit="runJobSearch(event)" class="quick-search">
+                    <input type="text" id="job-query" placeholder="Meserie (ex: Șofer, Casier, Mecanic)..." required>
+                    <input type="text" id="job-city" placeholder="Oraș (ex: Arad, Timișoara, București)...">
+                    <button type="submit" id="btn-scan">Scanează Anunțuri</button>
+                </form>
+                <!-- Containerul unde Google afiseaza anunturile individuale -->
+                <div id="google-results-box"></div>
             </div>
 
             <div class="ad-slot">Spațiu Publicitar Parteneri (Google AdSense / AdMob)</div>
