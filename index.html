@@ -19,10 +19,11 @@
         .search-submit { background-color: #3182ce; color: white; border: none; cursor: pointer; font-weight: bold; transition: background 0.2s; }
         .search-submit:hover { background-color: #2b6cb0; }
         .platform-card { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid #3182ce; padding: 20px; margin-bottom: 15px; border-radius: 4px; text-align: left; }
+        .platform-card.anofm { border-left-color: #2f855a; background-color: #f0fff4; }
         .platform-name { font-size: 18px; font-weight: bold; color: #2d3748; }
         .platform-desc { font-size: 14px; color: #4a5568; margin: 8px 0 12px 0; }
         .apply-btn { display: inline-block; padding: 12px 24px; background: #3182ce; color: white; text-decoration: none; border-radius: 4px; font-size: 15px; font-weight: bold; text-align: center; }
-        .apply-btn:hover { background: #2b6cb0; }
+        .apply-btn.anofm-btn { background: #2f855a; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #3182ce; text-decoration: none; font-weight: bold; cursor: pointer; background: none; border: none; font-size: 16px; padding: 0; }
         .hidden { display: none; }
         @media(min-width: 480px) { .search-box { flex-direction: row; } input { flex: 2; } .search-submit { flex: 1; } }
@@ -35,18 +36,15 @@
             <button type="button" onclick="setLang('en')" id="btn-en" class="lang-btn">EN</button>
             <button type="button" onclick="setLang('hu')" id="btn-hu" class="lang-btn">HU</button>
         </div>
-
         <div id="search-view">
             <h1 id="t-title">JobiQ - Motor Inteligent de Căutare</h1>
             <p class="sub-text" id="t-sub">Aplicație inteligentă care agreghează mii de rezultate reale.</p>
-            
             <form onsubmit="handleSearch(event)" class="search-box">
                 <input type="text" id="input-q" placeholder="Meserie (ex: Șofer, Casier, Mecanic)...">
                 <input type="text" id="input-l" placeholder="Oraș (ex: Arad, Orșova, Pitești) sau lasă gol...">
                 <button type="submit" class="search-submit" id="t-search-btn">Scanează Joburi</button>
             </form>
         </div>
-
         <div id="results-view" class="hidden">
             <button type="button" onclick="goBack()" class="back-link" id="t-back">← Înapoi la căutare</button>
             <h1 id="results-heading"></h1>
@@ -54,7 +52,6 @@
             <div id="platforms-list" style="margin-top: 15px;"></div>
         </div>
     </div>
-
     <script>
         const TRANSLATIONS = {
             ro: {
@@ -62,7 +59,7 @@
                 search_btn: "Scanează Joburi",
                 placeholder_q: "Meserie (ex: Șofer, Casier, Mecanic)...",
                 placeholder_l: "Oraș (ex: Arad, Orșova, Pitești) sau lasă gol...",
-                sub: "Aplicație inteligentă care agreghează mii de rezultate reale.",
+                sub: "Aplicație inteligentă care agreghează mii de rezultate reale (inclusiv ANOFM / Șomaj).",
                 click_to_see: "Apasă pe platforma dorită pentru a deschide toate paginile cu joburi reale:",
                 results_for: "Rezultate pentru",
                 all_jobs: "Toate joburile",
@@ -71,6 +68,7 @@
                 back: "← Înapoi la căutare",
                 open_btn: "Deschide Anunțurile Reale →",
                 platforms: [
+                    { name: "🏛️ ANOFM - Forțele de Muncă (Șomaj Oficial)", desc: "Baza oficială a statului român (AJOFM) cu locurile de muncă declarate de angajatori.", isAnofm: true },
                     { name: "OLX Locuri de Muncă (Toate Paginile)", desc: "Deschide direct pe OLX zecile de pagini cu anunțuri reale." },
                     { name: "eJobs România (Live)", desc: "Baza completă de date eJobs sortată instant." },
                     { name: "BestJobs", desc: "Anunțuri de angajare în timp real din rețeaua BestJobs." },
@@ -91,6 +89,7 @@
                 back: "← Back to search",
                 open_btn: "Open Real Job Listings →",
                 platforms: [
+                    { name: "🏛️ ANOFM - State Employment Agency", desc: "Official Romanian unemployment & employment agency job database.", isAnofm: true },
                     { name: "OLX Jobs Romania", desc: "Opens live job listings directly on OLX." },
                     { name: "eJobs Romania (Live)", desc: "Complete eJobs database sorted instantly." },
                     { name: "BestJobs", desc: "Real-time job offers from BestJobs network." },
@@ -111,6 +110,7 @@
                 back: "← Vissza a kereséshez",
                 open_btn: "Valós Állások Megnyitása →",
                 platforms: [
+                    { name: "🏛️ ANOFM - Hivatalos Munkaügyi Hivatal", desc: "A román állami munkaügyi hivatal hivatalos állásadatbázisa.", isAnofm: true },
                     { name: "OLX Állások", desc: "Közvetlenül megnyitja az OLX álláshirdetéseit." },
                     { name: "eJobs Románia (Élő)", desc: "A teljes eJobs adatbázis azonnal rendezve." },
                     { name: "BestJobs", desc: "Valós idejű állásajánlatok a BestJobs hálózatából." },
@@ -118,6 +118,7 @@
                 ]
             }
         };
+
         let currentLang = 'ro';
         let hasSearched = false;
 
@@ -134,11 +135,7 @@
         function setLang(lang) {
             currentLang = lang;
             document.documentElement.lang = lang;
-
-            ['ro', 'en', 'hu'].forEach(l => {
-                document.getElementById('btn-' + l).classList.toggle('active', l === lang);
-            });
-
+            ['ro', 'en', 'hu'].forEach(l => document.getElementById('btn-' + l).classList.toggle('active', l === lang));
             const t = TRANSLATIONS[lang];
             document.getElementById('page-title').textContent = t.title;
             document.getElementById('t-title').textContent = t.title;
@@ -148,10 +145,7 @@
             document.getElementById('t-search-btn').textContent = t.search_btn;
             document.getElementById('t-back').textContent = t.back;
             document.getElementById('t-click-to-see').textContent = t.click_to_see;
-
-            if (hasSearched) {
-                renderResults();
-            }
+            if (hasSearched) renderResults();
         }
 
         function generateUrls(qRaw, lRaw) {
@@ -160,42 +154,39 @@
             const qEncoded = encodeURIComponent(qRaw.trim());
             const lEncoded = encodeURIComponent(lRaw.trim());
 
+            // 1. ANOFM (Fortele de Munca / Somaj)
+            let urlAnofm = "https://anofm.ro";
+            if (qEncoded || lEncoded) {
+                const searchTerm = [qRaw.trim(), lRaw.trim()].filter(Boolean).join(" ");
+                urlAnofm = `https://google.com{encodeURIComponent(searchTerm)}+locuri+de+munca`;
+            }
+
+            // 2. OLX
             let urlOlx = "https://olx.ro";
-            if (lSlug && qSlug) {
-                urlOlx = `https://olx.ro${lSlug}/q-${qSlug}/`;
-            } else if (lSlug) {
-                urlOlx = `https://olx.ro${lSlug}/`;
-            } else if (qSlug) {
-                urlOlx = `https://olx.roq-${qSlug}/`;
-            }
+            if (lSlug && qSlug) urlOlx = `https://olx.ro${lSlug}/q-${qSlug}/`;
+            else if (lSlug) urlOlx = `https://olx.ro${lSlug}/`;
+            else if (qSlug) urlOlx = `https://olx.roq-${qSlug}/`;
 
+            // 3. eJobs
             let urlEjobs = "https://ejobs.ro";
-            if (lSlug && qSlug) {
-                urlEjobs = `https://ejobs.ro${lSlug}/${qSlug}/`;
-            } else if (lSlug) {
-                urlEjobs = `https://ejobs.ro${lSlug}/`;
-            } else if (qSlug) {
-                urlEjobs = `https://ejobs.ro${qSlug}/`;
-            }
+            if (lSlug && qSlug) urlEjobs = `https://ejobs.ro${lSlug}/${qSlug}/`;
+            else if (lSlug) urlEjobs = `https://ejobs.ro${lSlug}/`;
+            else if (qSlug) urlEjobs = `https://ejobs.ro${qSlug}/`;
 
+            // 4. BestJobs
             let urlBestjobs = "https://bestjobs.eu";
             const bjParams = [];
             if (qEncoded) bjParams.push(`keyword=${qEncoded}`);
             if (lEncoded) bjParams.push(`location=${lEncoded}`);
-            if (bjParams.length > 0) {
-                urlBestjobs += "?" + bjParams.join("&");
-            }
+            if (bjParams.length > 0) urlBestjobs += "?" + bjParams.join("&");
 
+            // 5. Publi24
             let urlPubli24 = "https://publi24.ro";
-            if (qEncoded && lEncoded) {
-                urlPubli24 = `https://publi24.ro?q=${qEncoded}+${lEncoded}`;
-            } else if (qEncoded) {
-                urlPubli24 = `https://publi24.ro?q=${qEncoded}`;
-            } else if (lEncoded) {
-                urlPubli24 = `https://publi24.ro?q=${lEncoded}`;
-            }
+            if (qEncoded && lEncoded) urlPubli24 = `https://publi24.ro?q=${qEncoded}+${lEncoded}`;
+            else if (qEncoded) urlPubli24 = `https://publi24.ro?q=${qEncoded}`;
+            else if (lEncoded) urlPubli24 = `https://publi24.ro?q=${lEncoded}`;
 
-            return [urlOlx, urlEjobs, urlBestjobs, urlPubli24];
+            return [urlAnofm, urlOlx, urlEjobs, urlBestjobs, urlPubli24];
         }
 
         function handleSearch(event) {
@@ -210,10 +201,8 @@
             const t = TRANSLATIONS[currentLang];
             const qRaw = document.getElementById('input-q').value.trim();
             const lRaw = document.getElementById('input-l').value.trim();
-
             const qDisplay = qRaw ? qRaw : t.all_jobs;
             const lDisplay = lRaw ? lRaw : t.default_loc;
-
             document.getElementById('results-heading').textContent = `${t.results_for} "${qDisplay}" ${t.in_word} ${lDisplay}`;
 
             const urls = generateUrls(qRaw, lRaw);
@@ -222,11 +211,11 @@
 
             t.platforms.forEach((plat, index) => {
                 const card = document.createElement('div');
-                card.className = 'platform-card';
+                card.className = plat.isAnofm ? 'platform-card anofm' : 'platform-card';
                 card.innerHTML = `
                     <div class="platform-name">${plat.name}</div>
                     <div class="platform-desc">${plat.desc}</div>
-                    <a href="${urls[index]}" target="_blank" rel="noopener noreferrer" class="apply-btn">${t.open_btn}</a>
+                    <a href="${urls[index]}" target="_blank" rel="noopener noreferrer" class="apply-btn ${plat.isAnofm ? 'anofm-btn' : ''}">${t.open_btn}</a>
                 `;
                 listContainer.appendChild(card);
             });
