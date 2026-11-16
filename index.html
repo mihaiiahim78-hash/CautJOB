@@ -14,182 +14,221 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
         body {
-            background-color: #f1f5f9;
+            background: linear-gradient(rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.82)),
+                        url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1600&q=80') center/cover fixed no-repeat;
             color: #1e293b;
-            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem 1rem;
         }
-        header.hero {
-            background: linear-gradient(rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.88)), 
-                        url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-            color: #ffffff;
-            padding: 4rem 1.5rem 5rem;
-            text-align: center;
+        .main-wrapper {
+            max-width: 980px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
         }
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e3a8a;
             letter-spacing: -0.5px;
         }
-        .hero p {
-            font-size: 1.15rem;
-            color: #cbd5e1;
+        .logo span {
+            color: #10b981;
+        }
+        .lang-switch {
+            display: flex;
+            gap: 0.4rem;
+        }
+        .lang-btn {
+            padding: 0.35rem 0.75rem;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+        }
+        .lang-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .tab-btn {
+            padding: 0.85rem 1rem;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            border: 2px solid #2563eb;
+            color: #1e3a8a;
+            background: #eff6ff;
+        }
+        .hero-text {
+            text-align: center;
+            margin-bottom: 1.75rem;
+        }
+        .hero-text h1 {
+            font-size: 1.85rem;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+        .hero-text p {
+            color: #64748b;
+            font-size: 0.98rem;
             max-width: 650px;
             margin: 0 auto;
         }
-        .container {
-            max-width: 1050px;
-            margin: -2.5rem auto 3rem;
-            padding: 0 1rem;
-        }
-        .card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 2rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-        }
-        .card h2 {
-            font-size: 1.35rem;
-            margin-bottom: 1.2rem;
-            color: #0f172a;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 0.6rem;
-        }
         .search-grid {
             display: grid;
-            grid-template-columns: 2fr 1.5fr 1.2fr auto;
+            grid-template-columns: 1.5fr 1.2fr 1.1fr;
             gap: 0.85rem;
-            align-items: end;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 0.35rem;
+            margin-bottom: 1rem;
         }
         input, select, textarea {
-            padding: 0.75rem 0.9rem;
+            width: 100%;
+            padding: 0.85rem 1rem;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             font-size: 0.95rem;
-            background: #f8fafc;
-            transition: border-color 0.2s, background 0.2s;
+            background: #ffffff;
+            color: #1e293b;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #2563eb;
-            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
-        button.btn-primary {
-            background-color: #2563eb;
+        .btn-search {
+            width: 100%;
+            background: #2563eb;
             color: #ffffff;
             border: none;
-            padding: 0.78rem 1.5rem;
+            padding: 0.95rem;
             border-radius: 8px;
-            font-size: 0.95rem;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background 0.2s;
         }
-        button.btn-primary:hover {
-            background-color: #1d4ed8;
+        .btn-search:hover {
+            background: #1d4ed8;
         }
-        .tabs {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        .tab-btn {
-            padding: 0.65rem 1.25rem;
-            border: 1px solid #cbd5e1;
-            background: #ffffff;
+        .ad-slot {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border: 1px dashed #cbd5e1;
             border-radius: 8px;
-            font-weight: 600;
-            color: #475569;
-            cursor: pointer;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            background: #f8fafc;
         }
-        .tab-btn.active {
-            background: #0f172a;
-            color: #ffffff;
-            border-color: #0f172a;
-        }
-        .review-item {
+        .review-card {
             border-bottom: 1px solid #e2e8f0;
             padding: 1rem 0;
-        }
-        .review-item:last-child {
-            border-bottom: none;
         }
         .badge-verified {
             background: #dcfce7;
             color: #166534;
             font-size: 0.75rem;
-            padding: 0.2rem 0.55rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 999px;
             font-weight: 600;
             margin-left: 0.5rem;
         }
-        footer {
-            text-align: center;
-            padding: 2rem 1rem;
-            color: #64748b;
-            font-size: 0.85rem;
+        .gdpr-box {
+            line-height: 1.7;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+        .gdpr-box h3 {
+            margin: 1rem 0 0.4rem;
+            color: #0f172a;
         }
         @media (max-width: 768px) {
             .search-grid {
                 grid-template-columns: 1fr;
             }
-            .hero h1 {
-                font-size: 1.9rem;
+            .nav-tabs {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <header class="hero">
-        <h1>JobiQ — Cariera ta, fără compromisuri</h1>
-        <p>Descoperă joburi reale, filtrează rapid după program și citește recenzii verificate de la angajați.</p>
-    </header>
-
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('jobs', this)">Caută Joburi</button>
-            <button class="tab-btn" onclick="switchTab('reviews', this)">Recenzii Angajatori</button>
+    <div class="main-wrapper">
+        <div class="top-bar">
+            <div class="logo">Jobi<span>Q</span></div>
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="setLang('ro', this)">RO</button>
+                <button class="lang-btn" onclick="setLang('en', this)">EN</button>
+                <button class="lang-btn" onclick="setLang('hu', this)">HU</button>
+            </div>
         </div>
 
-        <div id="tab-jobs" class="card">
-            <h2>Căutare Avansată Joburi</h2>
-            <div class="search-grid">
-                <div class="form-group">
-                    <label for="jobQuery">Funcție / Domeniu</label>
-                    <input type="text" id="jobQuery" placeholder="ex: Șofer, Contabil, IT...">
-                </div>
-                <div class="form-group">
-                    <label for="jobCity">Oraș</label>
-                    <input type="text" id="jobCity" placeholder="ex: Arad, București, Cluj...">
-                </div>
-                <div class="form-group">
-                    <label for="jobType">Program de lucru</label>
-                    <select id="jobType">
-                        <option value="">Toate tipurile</option>
-                        <option value="full time">Full-time</option>
-                        <option value="part time">Part-time</option>
-                        <option value="remote">Remote / De acasă</option>
-                    </select>
-                </div>
-                <button class="btn-primary" onclick="executeJobSearch()">Caută</button>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('jobs', this)">🔍 Caută Joburi</button>
+            <button class="tab-btn" onclick="switchTab('reviews', this)">⭐ Recenzii Angajatori</button>
+            <button class="tab-btn" onclick="switchTab('gdpr', this)">⚖️ GDPR & Confidențialitate</button>
+        </div>
+
+        <!-- TAB 1: CAUTARE JOBURI -->
+        <div id="tab-jobs">
+            <div class="hero-text">
+                <h1>Caută Anunțuri Reale de Angajare</h1>
+                <p>Introdu meseria, orașul și tipul de program. Îți afișăm direct lista de anunțuri individuale de pe toate platformele pentru a depune CV-ul.</p>
             </div>
+
+            <div class="search-grid">
+                <input type="text" id="jobQuery" placeholder="Meserie (ex: Șofer, Casier, Mecanic)...">
+                <input type="text" id="jobCity" placeholder="Oraș (ex: Arad, Timișoara, București)...">
+                <select id="jobType">
+                    <option value="">Program: Toate tipurile</option>
+                    <option value="full time">Full-time (Normă întreagă)</option>
+                    <option value="part time">Part-time (Jumătate de normă)</option>
+                    <option value="remote">Remote / De acasă</option>
+                </select>
+            </div>
+
+            <button class="btn-search" onclick="executeJobSearch()">🔍 Scanează Toate Anunțurile Individuale</button>
+
             <div id="cse-results" style="margin-top: 1.5rem;">
                 <div class="gcse-searchresults-only" data-gname="jobiqSearch"></div>
             </div>
+
+            <div class="ad-slot">Spațiu Publicitar Parteneri (Google AdSense / AdMob)</div>
         </div>
 
-        <div id="tab-reviews" class="card" style="display: none;">
-            <h2>Recenzii Verificate Companii</h2>
+        <!-- TAB 2: RECENZII ANGAJATORI -->
+        <div id="tab-reviews" style="display: none;">
+            <div class="hero-text">
+                <h1>Recenzii Verificate Angajatori</h1>
+                <p>Spune-ți părerea despre locul de muncă sau verifică experiența altor angajați înainte să aplici.</p>
+            </div>
+
             <form id="reviewForm" onsubmit="submitReview(event)" style="display: grid; gap: 0.85rem; margin-bottom: 2rem;">
                 <input type="text" id="revCompany" placeholder="Numele companiei" required>
                 <input type="text" id="revCity" placeholder="Orașul" required>
@@ -203,18 +242,28 @@
                 </select>
                 <input type="tel" id="revPhone" placeholder="Număr de telefon (pentru verificare)" required>
                 <textarea id="revComment" rows="3" placeholder="Scrie experiența ta..." required></textarea>
-                <label style="font-size: 0.85rem; color: #475569;">
-                    <input type="checkbox" required> Sunt de acord cu prelucrarea datelor conform politicii GDPR.
+                <label style="font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" style="width: auto;" required> Sunt de acord cu prelucrarea datelor conform politicii GDPR.
                 </label>
-                <button type="submit" class="btn-primary">Trimite Recenzia</button>
+                <button type="submit" class="btn-search">Trimite Recenzia</button>
             </form>
-            <div id="reviewsList"><p>Se încarcă recenziile...</p></div>
+
+            <div id="reviewsList"><p style="color: #64748b;">Se încarcă recenziile...</p></div>
+        </div>
+
+        <!-- TAB 3: GDPR -->
+        <div id="tab-gdpr" style="display: none;">
+            <div class="gdpr-box">
+                <h2>Politică de Confidențialitate & GDPR</h2>
+                <h3>1. Ce date colectăm</h3>
+                <p>Platforma JobiQ nu stochează CV-uri. Pentru secțiunea de recenzii, colectăm numele companiei, orașul, nota, comentariul și numărul de telefon exclusiv pentru verificarea autenticității recenziei.</p>
+                <h3>2. Moderare și publicare</h3>
+                <p>Toate recenziile sunt verificate manual înainte de publicare. Numărul de telefon nu este afișat public niciodată.</p>
+                <h3>3. Drepturile utilizatorilor</h3>
+                <p>Conform Regulamentului (UE) 2016/679 (GDPR), ai dreptul de acces, rectificare sau ștergere a datelor tale personale la cerere.</p>
+            </div>
         </div>
     </div>
-
-    <footer>
-        &copy; 2026 JobiQ România. Toate drepturile rezervate. | Platformă conformă GDPR.
-    </footer>
 
     <script>
         const SUPABASE_URL = 'URL_UL_TAU_SUPABASE';
@@ -224,38 +273,61 @@
         function switchTab(tabName, btn) {
             document.getElementById('tab-jobs').style.display = tabName === 'jobs' ? 'block' : 'none';
             document.getElementById('tab-reviews').style.display = tabName === 'reviews' ? 'block' : 'none';
+            document.getElementById('tab-gdpr').style.display = tabName === 'gdpr' ? 'block' : 'none';
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             if (tabName === 'reviews') loadReviews();
         }
 
+        function setLang(lang, btn) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
         function executeJobSearch() {
             const q = document.getElementById('jobQuery').value.trim();
             const city = document.getElementById('jobCity').value.trim();
-            const type = document.getElementById('jobType').value.trim();
-            const fullQuery = [q, city, type, 'angajari job'].filter(Boolean).join(' ');
+            const type = document.getElementById('jobType').value;
+
+            let fullQuery = ['angajari', q, city, type].filter(Boolean).join(' ');
+            if (!fullQuery || fullQuery === 'angajari') {
+                alert('Te rugăm să introduci cel puțin o meserie sau un oraș.');
+                return;
+            }
+
             if (window.google && google.search && google.search.cse) {
                 const element = google.search.cse.element.getElement('jobiqSearch');
-                if (element) element.execute(fullQuery);
+                if (element) {
+                    element.execute(fullQuery);
+                }
             }
         }
 
         async function loadReviews() {
             const list = document.getElementById('reviewsList');
             if (!db) {
-                list.innerHTML = '<p>Configurează datele Supabase în cod pentru a afișa recenziile.</p>';
+                list.innerHTML = '<p style="color:#64748b;">Configurează cheia Supabase în cod pentru a afișa recenziile.</p>';
                 return;
             }
-            const { data, error } = await db.from('recenzii').select('*').eq('aprobat', true).order('id', { ascending: false });
-            if (error || !data || data.length === 0) {
-                list.innerHTML = '<p>Nu există încă recenzii aprobate.</p>';
+            const { data, error } = await db
+                .from('recenzii')
+                .select('*')
+                .eq('aprobat', true)
+                .order('id', { ascending: false });
+
+            if (error) {
+                list.innerHTML = '<p style="color:#dc2626;">Eroare la încărcarea recenziilor.</p>';
+                return;
+            }
+            if (!data || data.length === 0) {
+                list.innerHTML = '<p style="color:#64748b;">Nu există încă recenzii aprobate.</p>';
                 return;
             }
             list.innerHTML = data.map(r => `
-                <div class="review-item">
-                    <strong>${r.companie}</strong> (${r.oras}) — Nota: <strong>${r.nota}/5</strong>
-                    ${r.telefon_verificat ? '<span class="badge-verified">Telefon verificat</span>' : ''}
-                    <p style="margin-top: 0.4rem;">${r.comentariu}</p>
+                <div class="review-card">
+                    <strong>${r.companie}</strong> (${r.oras}) — <strong>${r.nota}/5 ⭐</strong>
+                    ${r.telefon_verificat ? '<span class="badge-verified">✔ Verificat</span>' : ''}
+                    <p style="margin-top:0.4rem; color:#334155;">${r.comentariu}</p>
                 </div>
             `).join('');
         }
@@ -263,7 +335,7 @@
         async function submitReview(e) {
             e.preventDefault();
             if (!db) {
-                alert('Configurează datele Supabase în cod înainte de a trimite recenzii.');
+                alert('Configurează mai întâi cheile Supabase în fișier.');
                 return;
             }
             const payload = {
@@ -276,7 +348,7 @@
             };
             const { error } = await db.from('recenzii').insert([payload]);
             if (error) {
-                alert('Eroare la trimitere: ' + error.message);
+                alert('A apărut o eroare la trimitere.');
             } else {
                 alert('Recenzia a fost trimisă și așteaptă aprobarea!');
                 document.getElementById('reviewForm').reset();
