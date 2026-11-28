@@ -3,513 +3,643 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JobiQ - Joburi Individuale & Recenzii Verificate</title>
+    <title>JobiQ - Găsește Jobul Potrivit & Verifică Angajatorii</title>
     <link rel="icon" type="image/png" href="logo_jobiq.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script async src="https://cse.google.com/cse.js?cx=45997d19d92a24609"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        body { background-color: #f1f5f9; color: #1e293b; line-height: 1.6; }
-        header {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 58, 138, 0.85)),
-                        url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-            color: #ffffff;
-            padding: 2.5rem 1rem 3.5rem;
-            text-align: center;
+        :root {
+            --primary: #1d4ed8;
+            --primary-dark: #1e3a8a;
+            --accent: #10b981;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
         }
-        .top-bar {
-            max-width: 960px;
-            margin: 0 auto 1.5rem;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 60px; }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 16px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .brand { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: #ffffff; display: flex; align-items: center; gap: 0.5rem; }
-        .brand span { background: #2563eb; padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.85rem; }
-        .lang-switch { display: flex; gap: 0.4rem; }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+        .brand-badge { background: var(--accent); color: white; font-size: 0.7rem; padding: 2px 7px; border-radius: 12px; font-weight: 700; text-transform: uppercase; }
+        
+        .lang-switch { display: flex; gap: 6px; }
         .lang-btn {
             background: rgba(255,255,255,0.15);
             border: 1px solid rgba(255,255,255,0.3);
-            color: #fff;
-            padding: 0.3rem 0.65rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        .lang-btn.active { background: #2563eb; border-color: #2563eb; }
-        header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
-        header p { color: #cbd5e1; max-width: 600px; margin: 0 auto; font-size: 1rem; }
-        .container { max-width: 960px; margin: -2rem auto 3rem; padding: 0 1rem; }
-        .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
-        .tab-btn {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            padding: 0.7rem 1.2rem;
-            border-radius: 10px;
-            font-weight: 600;
-            color: #475569;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-        }
-        .tab-btn.active { background: #2563eb; color: #ffffff; border-color: #2563eb; }
-        .card {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 1.75rem;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.06);
-            margin-bottom: 1.5rem;
-        }
-        .card h2 { font-size: 1.35rem; margin-bottom: 1.2rem; color: #0f172a; }
-        .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.9rem; align-items: end; }
-        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
-        .form-group label { font-size: 0.85rem; font-weight: 600; color: #475569; }
-        .form-group input, .form-group select, .form-group textarea {
-            padding: 0.7rem 0.9rem;
-            border: 1px solid #cbd5e1;
+            color: white;
+            padding: 5px 10px;
             border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .lang-btn.active, .lang-btn:hover { background: white; color: var(--primary-dark); }
+
+        .container { max-width: 900px; margin: 20px auto; padding: 0 16px; }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--card);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 110px;
+            padding: 10px 14px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.92rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 22px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+        }
+        .card h2 { font-size: 1.25rem; margin-bottom: 6px; color: var(--primary-dark); }
+        .card p.subtitle { color: var(--muted); font-size: 0.92rem; margin-bottom: 18px; }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        @media (max-width: 600px) {
+            .search-grid { grid-template-columns: 1fr; }
+        }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+        input, select, textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
             font-size: 0.95rem;
             outline: none;
+            transition: 0.2s;
+            background: #fff;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #2563eb; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(29,78,216,0.1); }
+
+        .filters-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .filter-chip {
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            background: #f1f5f9;
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .filter-chip.active {
+            background: #dbeafe;
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
         .btn-primary {
-            background: #2563eb;
-            color: #ffffff;
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            color: white;
             border: none;
-            padding: 0.78rem 1.4rem;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .btn-primary:hover { background: #1d4ed8; }
-        .review-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.2rem; }
-        .full-width { grid-column: 1 / -1; }
-        .alert-msg { padding: 0.85rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; display: none; }
-        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-        .review-item { border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.1rem; margin-bottom: 0.9rem; background: #f8fafc; }
-        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem; }
-        .review-company { font-weight: 700; color: #0f172a; font-size: 1.05rem; }
-        .badge-verified { background: #dcfce7; color: #15803d; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 999px; }
-        .review-meta { font-size: 0.82rem; color: #64748b; margin-bottom: 0.5rem; }
-        .stars { color: #f59e0b; font-weight: 700; }
-        footer { text-align: center; color: #64748b; font-size: 0.85rem; padding: 1.5rem 1rem 2.5rem; }
+        .btn-primary:hover { background: var(--primary-dark); }
+
+        .btn-accent {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 12px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .portal-card {
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
+            transition: 0.2s;
+        }
+        .portal-card:hover { border-color: var(--primary); background: #fff; transform: translateY(-2px); }
+        .portal-title { font-weight: 700; font-size: 1.05rem; color: var(--primary-dark); }
+        .portal-desc { font-size: 0.85rem; color: var(--muted); }
+        .portal-link {
+            display: inline-block;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .review-item {
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+        }
+        .review-item:last-child { border-bottom: none; }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .review-company { font-weight: 700; color: var(--primary-dark); font-size: 1rem; }
+        .review-stars { color: #f59e0b; font-weight: 700; }
+        .review-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+        .review-text { font-size: 0.92rem; color: var(--text); }
+
+        .alert { padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-top: 10px; display: none; }
+        .alert.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; display: block; }
+        .alert.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; display: block; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="top-bar">
-        <div class="brand">JobiQ <span>RO / HU</span></div>
+    <div class="header-inner">
+        <div class="brand">
+            <span>🔍 JobiQ</span>
+            <span class="brand-badge">RO / HU</span>
+        </div>
         <div class="lang-switch">
-            <button class="lang-btn active" onclick="setLang('ro', this)">RO</button>
-            <button class="lang-btn" onclick="setLang('en', this)">EN</button>
-            <button class="lang-btn" onclick="setLang('hu', this)">HU</button>
+            <button type="button" class="lang-btn active" id="btn-ro" onclick="setLang('ro')">RO</button>
+            <button type="button" class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+            <button type="button" class="lang-btn" id="btn-hu" onclick="setLang('hu')">HU</button>
         </div>
     </div>
-    <h1 id="heroTitle">JobiQ - Cariera ta, fără compromisuri</h1>
-    <p id="heroSub">Găsește direct anunțuri individuale de angajare și citește recenzii verificate despre angajatori.</p>
 </header>
 
 <div class="container">
-    <div class="tabs">
-        <button class="tab-btn active" id="tabBtnJobs" onclick="switchTab('jobs', this)">Caută Joburi</button>
-        <button class="tab-btn" id="tabBtnReviews" onclick="switchTab('reviews', this)">Recenzii Angajatori</button>
-        <button class="tab-btn" id="tabBtnGdpr" onclick="switchTab('gdpr', this)">GDPR & Confidențialitate</button>
+    <div class="nav-tabs">
+        <button type="button" class="tab-btn active" id="tab-btn-search" onclick="switchTab('search')">🔍 Caută Joburi</button>
+        <button type="button" class="tab-btn" id="tab-btn-reviews" onclick="switchTab('reviews')">⭐ Recenzii Firme</button>
+        <button type="button" class="tab-btn" id="tab-btn-gdpr" onclick="switchTab('gdpr')">🛡️ GDPR & Contact</button>
     </div>
 
-    <div id="tab-jobs" class="card">
-        <h2 id="searchTitle">Căutare Directă Anunțuri Individuale</h2>
-        <div class="search-grid">
-            <div class="form-group">
-                <label for="jobQuery" id="lblJob">Funcție / Meserie</label>
-                <input type="text" id="jobQuery" placeholder="ex: Șofer, Contabil, Vânzător, IT...">
+    <!-- TAB 1: CAUTARE JOBURI -->
+    <div id="tab-search" class="tab-content active">
+        <div class="card">
+            <h2 id="search-title">Găsește Joburi Direct la Angajator</h2>
+            <p class="subtitle" id="search-sub">Selectează țara, introdu meseria sau orașul și deschide instant anunțurile active.</p>
+
+            <div class="search-grid">
+                <div class="form-group">
+                    <label for="countrySelect" id="lbl-country">🌍 Țara de căutare</label>
+                    <select id="countrySelect">
+                        <option value="ro">🇷🇴 România</option>
+                        <option value="hu">🇭🇺 Ungaria (Magyarország)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="jobKeyword" id="lbl-keyword">💼 Meserie / Cuvânt cheie</label>
+                    <input type="text" id="jobKeyword" placeholder="ex: Șofer, Vânzător, Depozit, Operator...">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="jobCity" id="lblCity">Oraș</label>
-                <input type="text" id="jobCity" placeholder="ex: Arad, București, Budapesta...">
+
+            <div class="form-group" style="margin-bottom: 14px;">
+                <label for="jobCity" id="lbl-city">📍 Oraș / Județ (opțional)</label>
+                <input type="text" id="jobCity" placeholder="ex: Arad, Timișoara, București, Cluj...">
             </div>
-            <div class="form-group">
-                <label for="jobType" id="lblType">Program de lucru</label>
-                <select id="jobType">
-                    <option value="">Toate tipurile / All / Mind</option>
-                    <option value="full">Full-time</option>
-                    <option value="part">Part-time</option>
-                    <option value="remote">Remote / Home Office</option>
-                </select>
+
+            <div class="filters-row" id="jobTypeFilters">
+                <button type="button" class="filter-chip active" data-type="" onclick="selectJobType(this)">Toate</button>
+                <button type="button" class="filter-chip" data-type="full time" onclick="selectJobType(this)">Full-time</button>
+                <button type="button" class="filter-chip" data-type="part time" onclick="selectJobType(this)">Part-time</button>
+                <button type="button" class="filter-chip" data-type="remote" onclick="selectJobType(this)">Remote / De acasă</button>
             </div>
-            <div class="form-group">
-                <label for="jobCountry" id="lblCountry">Țara căutării</label>
-                <select id="jobCountry">
-                    <option value="ro">RO România</option>
-                    <option value="hu">HU Ungaria (Magyarország)</option>
-                </select>
+
+            <button type="button" class="btn-primary" id="btnSearchJobs" onclick="runJobSearch()">
+                🚀 Caută Joburi Acum
+            </button>
+
+            <div id="searchResults" class="results-grid"></div>
+        </div>
+    </div>
+
+    <!-- TAB 2: RECENZII ANGAJATORI -->
+    <div id="tab-reviews" class="tab-content">
+        <div class="card">
+            <h2 id="rev-title">Verifică sau Adaugă o Recenzie</h2>
+            <p class="subtitle" id="rev-sub">Ajută alți candidați să afle dacă angajatorul este serios și plătește la timp.</p>
+
+            <div class="search-grid">
+                <div class="form-group">
+                    <label id="lbl-comp">Numele Firmei *</label>
+                    <input type="text" id="revCompany" placeholder="ex: SC Exemplu SRL">
+                </div>
+                <div class="form-group">
+                    <label id="lbl-rating">Nota acordată *</label>
+                    <select id="revRating">
+                        <option value="5">⭐⭐⭐⭐⭐ (5 - Excelent)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 - Bun)</option>
+                        <option value="3">⭐⭐⭐ (3 - Acceptabil)</option>
+                        <option value="2">⭐⭐ (2 - Neserios)</option>
+                        <option value="1">⭐ (1 - De evitat)</option>
+                    </select>
+                </div>
             </div>
-            <button class="btn-primary" id="btnSearch" onclick="executeJobSearch()">Caută</button>
+
+            <div class="search-grid">
+                <div class="form-group">
+                    <label id="lbl-author">Numele tău (sau inițiale) *</label>
+                    <input type="text" id="revAuthor" placeholder="ex: Andrei M.">
+                </div>
+                <div class="form-group">
+                    <label id="lbl-phone">Telefon (pentru verificare, nu se afișează) *</label>
+                    <input type="tel" id="revPhone" placeholder="ex: 0722123456">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+                <label id="lbl-comment">Experiența ta la această firmă *</label>
+                <textarea id="revComment" rows="3" placeholder="Scrie pe scurt despre salariu, program și seriozitate..."></textarea>
+            </div>
+
+            <button type="button" class="btn-primary" id="btnSubmitReview" onclick="submitReview()">
+                ✍️ Trimite Recenzia
+            </button>
+            <div id="reviewAlert" class="alert"></div>
         </div>
 
-        <div id="cse-results" style="margin-top: 1.5rem;">
-            <div class="gcse-searchresults-only" data-gname="jobiqSearch"></div>
+        <div class="card">
+            <h2 id="rev-list-title">Recenzii Verificate Recent</h2>
+            <div id="reviewsList" style="margin-top: 10px;">Se încarcă recenziile...</div>
         </div>
     </div>
 
-    <div id="tab-reviews" class="card" style="display: none;">
-        <h2 id="revTitle">Recenzii Verificate Angajatori</h2>
-        <div id="revAlert" class="alert-msg"></div>
-
-        <form id="reviewForm" class="review-form-grid" onsubmit="submitReview(event)">
-            <div class="form-group">
-                <label id="lblRevAuthor">Nume și Prenume *</label>
-                <input type="text" id="revAuthor" placeholder="ex: Popescu Andrei" required>
-            </div>
-            <div class="form-group">
-                <label id="lblRevPhone">Număr de telefon (pentru verificare, nu se afișează public) *</label>
-                <input type="tel" id="revPhone" placeholder="ex: 0740123456 / +36..." required>
-            </div>
-            <div class="form-group">
-                <label id="lblRevCompany">Numele Companiei *</label>
-                <input type="text" id="revCompany" placeholder="ex: Nume Firmă SRL / Kft." required>
-            </div>
-            <div class="form-group">
-                <label id="lblRevCity">Orașul *</label>
-                <input type="text" id="revCity" placeholder="ex: Arad / Budapest" required>
-            </div>
-            <div class="form-group">
-                <label id="lblRevRating">Notă acordată *</label>
-                <select id="revRating" required>
-                    <option value="5">5 - Excelent</option>
-                    <option value="4">4 - Bun</option>
-                    <option value="3">3 - Acceptabil</option>
-                    <option value="2">2 - Slab</option>
-                    <option value="1">1 - De evitat</option>
-                </select>
-            </div>
-            <div class="form-group" style="display:none;">
-                <input type="text" id="website_hp" tabindex="-1" autocomplete="off">
-            </div>
-            <div class="form-group full-width">
-                <label id="lblRevComment">Experiența ta la acest angajator *</label>
-                <textarea id="revComment" rows="3" placeholder="Descrie pe scurt condițiile de lucru, salariul și seriozitatea..." required></textarea>
-            </div>
-            <div class="full-width" style="display:flex; align-items:center; gap:0.5rem;">
-                <input type="checkbox" id="gdprCheck" required>
-                <label for="gdprCheck" id="lblGdprCheck" style="font-size:0.85rem; color:#475569;">Confirm că recenzia este reală și sunt de acord cu verificarea telefonică conform politicii GDPR.</label>
-            </div>
-            <div class="full-width">
-                <button type="submit" class="btn-primary" id="btnSubmitRev">Trimite Recenzia spre Verificare</button>
-            </div>
-        </form>
-
-        <h3 id="revRecentTitle" style="font-size: 1.1rem; color: #0f172a; margin-bottom: 0.8rem;">Recenzii Aprobate Recent</h3>
-        <div id="reviewsList"><p style="color: #64748b;">Apasă pe tab pentru a încărca recenziile...</p></div>
-    </div>
-
-    <div id="tab-gdpr" class="card" style="display: none;">
-        <h2 id="gdprTitle">Politică GDPR & Protecția Datelor</h2>
-        <p id="gdprP1" style="margin-bottom: 0.8rem;"><strong>1. Ce date colectăm:</strong> Platforma JobiQ nu solicită crearea unui cont pentru căutarea anunțurilor de angajare. Pentru publicarea unei recenzii, colectăm numele, orașul, numele angajatorului și un număr de telefon utilizat exclusiv pentru verificarea autenticității.</p>
-        <p id="gdprP2" style="margin-bottom: 0.8rem;"><strong>2. Confidențialitatea numărului de telefon:</strong> Numărul de telefon este protejat la nivel de bază de date (Row Level Security) și nu este afișat public niciodată pe site.</p>
-        <p id="gdprP3" style="margin-bottom: 1.2rem;"><strong>3. Moderare și dreptul la ștergere:</strong> Toate recenziile sunt verificate manual înainte de publicare. Pentru modificarea sau ștergerea unei recenzii, precum și pentru colaborări comerciale, ne poți contacta direct mai jos.</p>
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; text-align: center;">
-            <p id="gdprContactText" style="margin-bottom: 0.6rem; font-weight: 600; color: #0f172a;">Contact Oficial & Colaborări:</p>
-            <a href="mailto:contact.jobiq@gmail.com" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 0.65rem 1.2rem; border-radius: 8px; font-weight: 700;">contact.jobiq@gmail.com</a>
+    <!-- TAB 3: GDPR & CONTACT -->
+    <div id="tab-gdpr" class="tab-content">
+        <div class="card">
+            <h2 id="gdpr-title">🛡️ Politica de Confidențialitate (GDPR) & Contact</h2>
+            <p id="gdpr-p1" style="margin-bottom: 12px;">
+                Aplicația <strong>JobiQ</strong> respectă confidențialitatea datelor dumneavoastră conform Regulamentului European (GDPR). Căutările de locuri de muncă sunt anonime și nu necesită crearea unui cont.
+            </p>
+            <p id="gdpr-p2" style="margin-bottom: 12px;">
+                Numărul de telefon introdus la trimiterea unei recenzii este folosit exclusiv pentru validarea autenticității și prevenirea mesajelor false. Acesta nu este afișat public și nu este vândut către terți.
+            </p>
+            <p id="gdpr-p3" style="margin-bottom: 14px;">
+                Pentru solicitări de ștergere a datelor, întrebări sau propuneri de colaborare și promovare, ne puteți contacta direct la adresa oficială:
+            </p>
+            <a href="mailto:contact.jobiq@gmail.com?subject=Contact%20JobiQ" class="btn-accent" id="gdpr-contact-btn">
+                ✉️ Contactează-ne: contact.jobiq@gmail.com
+            </a>
         </div>
     </div>
 </div>
 
-<footer>
-    &copy; 2026 JobiQ. Toate drepturile rezervate. | Platformă securizată & conformă GDPR.
-</footer>
-
 <script>
+    // Configurare Supabase
     const SUPABASE_URL = 'https://jicjdhnaivjqkrmftvpu.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppY2pkaG5haXZqcWtybWZ0dnB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzNzYxNDYsImV4cCI6MjA3ODk1MjE0Nn0.lL9M-f5_12wS72l62B67h91P1aG5haXZqcWtybWZ0dnB1Iiwicm9sZSI6ImFub24i';
-    let db = null;
-    if (window.supabase && SUPABASE_ANON_KEY !== 'LIPESTE_CHEIA_AICI') {
-        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppY2pkaG5haXZqcWtybWZ0dnB1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4MDc4NTcsImV4cCI6MjA5MTM4Mzg1N30.4H8y1n9z7g0A1wX9k2L3m4N5o6P7q8R9s0T1u2V3w4X';
+    let supabaseClient = null;
+    try {
+        if (window.supabase) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+    } catch (e) {
+        console.error('Supabase init error:', e);
     }
 
-    function switchTab(tabName, btn) {
-        document.getElementById('tab-jobs').style.display = tabName === 'jobs' ? 'block' : 'none';
-        document.getElementById('tab-reviews').style.display = tabName === 'reviews' ? 'block' : 'none';
-        document.getElementById('tab-gdpr').style.display = tabName === 'gdpr' ? 'block' : 'none';
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    let currentLang = 'ro';
+    let selectedJobType = '';
+
+    const translations = {
+        ro: {
+            tabSearch: '🔍 Caută Joburi',
+            tabReviews: '⭐ Recenzii Firme',
+            tabGdpr: '🛡️ GDPR & Contact',
+            searchTitle: 'Găsește Joburi Direct la Angajator',
+            searchSub: 'Selectează țara, introdu meseria sau orașul și deschide instant anunțurile active.',
+            lblCountry: '🌍 Țara de căutare',
+            lblKeyword: '💼 Meserie / Cuvânt cheie',
+            lblCity: '📍 Oraș / Județ (opțional)',
+            btnSearch: '🚀 Caută Joburi Acum',
+            revTitle: 'Verifică sau Adaugă o Recenzie',
+            revSub: 'Ajută alți candidați să afle dacă angajatorul este serios și plătește la timp.',
+            revListTitle: 'Recenzii Verificate Recent',
+            gdprTitle: '🛡️ Politica de Confidențialitate (GDPR) & Contact',
+            gdprP1: 'Aplicația JobiQ respectă confidențialitatea datelor dumneavoastră conform Regulamentului European (GDPR). Căutările de locuri de muncă sunt anonime și nu necesită crearea unui cont.',
+            gdprP2: 'Numărul de telefon introdus la trimiterea unei recenzii este folosit exclusiv pentru validarea autenticității și prevenirea mesajelor false. Acesta nu este afișat public și nu este vândut către terți.',
+            gdprP3: 'Pentru solicitări de ștergere a datelor, întrebări sau propuneri de colaborare și promovare, ne puteți contacta direct la adresa oficială:',
+            gdprBtn: '✉️ Contactează-ne: contact.jobiq@gmail.com',
+            openBtn: 'Vezi Anunțurile →'
+        },
+        en: {
+            tabSearch: '🔍 Search Jobs',
+            tabReviews: '⭐ Company Reviews',
+            tabGdpr: '🛡️ GDPR & Contact',
+            searchTitle: 'Find Jobs Directly from Employers',
+            searchSub: 'Select the country, enter a job title or city, and open active listings instantly.',
+            lblCountry: '🌍 Target Country',
+            lblKeyword: '💼 Job Title / Keyword',
+            lblCity: '📍 City / Region (optional)',
+            btnSearch: '🚀 Search Jobs Now',
+            revTitle: 'Check or Add a Review',
+            revSub: 'Help other candidates know if an employer is reliable and pays on time.',
+            revListTitle: 'Recently Verified Reviews',
+            gdprTitle: '🛡️ Privacy Policy (GDPR) & Contact',
+            gdprP1: 'The JobiQ application respects your data privacy in accordance with the European GDPR Regulation. Job searches are completely anonymous and require no account.',
+            gdprP2: 'The phone number provided when submitting a review is used strictly to verify authenticity and prevent spam. It is never publicly displayed or sold to third parties.',
+            gdprP3: 'For data deletion requests, questions, or business and advertising inquiries, contact us directly at:',
+            gdprBtn: '✉️ Contact Us: contact.jobiq@gmail.com',
+            openBtn: 'View Listings →'
+        },
+        hu: {
+            tabSearch: '🔍 Álláskeresés',
+            tabReviews: '⭐ Cégértékelések',
+            tabGdpr: '🛡️ GDPR & Kapcsolat',
+            searchTitle: 'Keress Állást Közvetlenül a Munkaadóknál',
+            searchSub: 'Válaszd ki az országot, írd be a munkakört vagy várost, és nyisd meg az aktív hirdetéseket.',
+            lblCountry: '🌍 Keresési ország',
+            lblKeyword: '💼 Munkakör / Kulcsszó',
+            lblCity: '📍 Város / Megye (opcionális)',
+            btnSearch: '🚀 Állások Keresése Most',
+            revTitle: 'Cégértékelések Megtekintése vagy Írása',
+            revSub: 'Segíts más álláskeresőknek megtudni, mennyire megbízható a munkáltató.',
+            revListTitle: 'Legutóbbi Ellenőrzött Értékelések',
+            gdprTitle: '🛡️ Adatvédelmi Tájékoztató (GDPR) & Kapcsolat',
+            gdprP1: 'A JobiQ alkalmazás tiszteletben tartja az Ön személyes adatainak védelmét az Európai GDPR rendeletnek megfelelően. Az álláskeresés teljesen anonim, regisztráció nem szükséges.',
+            gdprP2: 'Az értékelés beküldésekor megadott telefonszám kizárólag a hitelesség ellenőrzésére és a hamis üzenetek kiszűrésére szolgál. Soha nem jelenik meg nyilvánosan.',
+            gdprP3: 'Adattörlési kérelmekkel, kérdésekkel vagy együttműködési ajánlatokkal kapcsolatban keressen minket közvetlenül az alábbi címen:',
+            gdprBtn: '✉️ Kapcsolat: contact.jobiq@gmail.com',
+            openBtn: 'Hirdetések Megnyitása →'
+        }
+    };
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + lang).classList.add('active');
+
+        const t = translations[lang];
+        document.getElementById('tab-btn-search').textContent = t.tabSearch;
+        document.getElementById('tab-btn-reviews').textContent = t.tabReviews;
+        document.getElementById('tab-btn-gdpr').textContent = t.tabGdpr;
+        document.getElementById('search-title').textContent = t.searchTitle;
+        document.getElementById('search-sub').textContent = t.searchSub;
+        document.getElementById('lbl-country').textContent = t.lblCountry;
+        document.getElementById('lbl-keyword').textContent = t.lblKeyword;
+        document.getElementById('lbl-city').textContent = t.lblCity;
+        document.getElementById('btnSearchJobs').textContent = t.btnSearch;
+        document.getElementById('rev-title').textContent = t.revTitle;
+        document.getElementById('rev-sub').textContent = t.revSub;
+        document.getElementById('rev-list-title').textContent = t.revListTitle;
+        document.getElementById('gdpr-title').textContent = t.gdprTitle;
+        document.getElementById('gdpr-p1').textContent = t.gdprP1;
+        document.getElementById('gdpr-p2').textContent = t.gdprP2;
+        document.getElementById('gdpr-p3').textContent = t.gdprP3;
+        document.getElementById('gdpr-contact-btn').textContent = t.gdprBtn;
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tabName).classList.add('active');
+        document.getElementById('tab-btn-' + tabName).classList.add('active');
         if (tabName === 'reviews') {
             loadReviews();
         }
     }
 
-    function executeJobSearch() {
-        const job = document.getElementById('jobQuery').value.trim();
+    function selectJobType(btn) {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        selectedJobType = btn.getAttribute('data-type');
+    }
+
+    function runJobSearch() {
+        const country = document.getElementById('countrySelect').value;
+        const keyword = document.getElementById('jobKeyword').value.trim();
         const city = document.getElementById('jobCity').value.trim();
-        const type = document.getElementById('jobType').value.trim();
-        const country = document.getElementById('jobCountry').value;
+        const resultsDiv = document.getElementById('searchResults');
+        const btnLabel = translations[currentLang].openBtn;
 
-        if (!job && !city) {
-            alert('Te rugăm să introduci cel puțin o funcție sau un oraș. / Kérjük, adjon meg legalább egy munkakört vagy várost.');
-            return;
-        }
+        const fullQuery = [keyword, selectedJobType, city].filter(Boolean).join(' ').trim() || (country === 'hu' ? 'állás' : 'locuri de munca');
+        const encodedQuery = encodeURIComponent(fullQuery);
+        const encodedKeyword = encodeURIComponent(keyword || (country === 'hu' ? 'munka' : 'angajari'));
+        const encodedCity = encodeURIComponent(city);
 
-        let typeKeyword = '';
-        if (country === 'hu') {
-            if (type === 'full') typeKeyword = 'teljes munkaidő';
-            if (type === 'part') typeKeyword = 'részmunkaidő';
-            if (type === 'remote') typeKeyword = 'távmunka home office';
+        let portals = [];
+        if (country === 'ro') {
+            portals = [
+                {
+                    name: 'eJobs.ro',
+                    desc: 'Cele mai multe oferte de la companii verificate din România.',
+                    url: `https://www.ejobs.ro/locuri-de-munca?q=${encodedQuery}`
+                },
+                {
+                    name: 'BestJobs.eu',
+                    desc: 'Joburi cu salariu afișat și aplicare rapidă fără CV complicat.',
+                    url: `https://www.bestjobs.eu/ro/locuri-de-munca?keyword=${encodedQuery}`
+                },
+                {
+                    name: 'OLX Locuri de Muncă',
+                    desc: 'Anunțuri directe de la angajatori locali din orașul tău.',
+                    url: `https://www.olx.ro/locuri-de-munca/q-${encodeURIComponent(fullQuery.replace(/\s+/g, '-'))}/`
+                },
+                {
+                    name: 'Jooble România',
+                    desc: 'Toate anunțurile adunate din sute de site-uri din România.',
+                    url: `https://ro.jooble.org/SearchResult?ukw=${encodedKeyword}&rgns=${encodedCity}`
+                }
+            ];
         } else {
-            if (type === 'full') typeKeyword = 'full time';
-            if (type === 'part') typeKeyword = 'part time';
-            if (type === 'remote') typeKeyword = 'remote';
+            portals = [
+                {
+                    name: 'Profession.hu',
+                    desc: 'Magyarország vezető állásportálja ellenőrzött cégekkel.',
+                    url: `https://www.profession.hu/allasok?keyword=${encodedQuery}`
+                },
+                {
+                    name: 'Jooble Magyarország',
+                    desc: 'Összesített álláshirdetések egész Magyarország területéről.',
+                    url: `https://hu.jooble.org/SearchResult?ukw=${encodedKeyword}&rgns=${encodedCity}`
+                },
+                {
+                    name: 'CVOnline.hu',
+                    desc: 'Friss teljes és részmunkaidős állásajánlatok.',
+                    url: `https://www.cvonline.hu/hu/allasok?q=${encodedQuery}`
+                }
+            ];
         }
 
-        let fullQuery = '';
-        if (country === 'hu') {
-            fullQuery = `${job} ${city} ${typeKeyword} (állás OR álláshirdetés OR jelentkezés OR fizetés) Magyarország`.trim();
-        } else {
-            fullQuery = `${job} ${city} ${typeKeyword} (angajez OR angajeaza OR aplica OR salariu OR CV) -inurl:categorie -inurl:lista -inurl:toate`.trim();
-        }
-
-        if (window.google && window.google.search && window.google.search.cse) {
-            const element = google.search.cse.element.getElement('jobiqSearch');
-            if (element) {
-                element.execute(fullQuery);
-            }
-        }
+        resultsDiv.innerHTML = portals.map(p => `
+            <div class="portal-card">
+                <div>
+                    <div class="portal-title">${p.name}</div>
+                    <div class="portal-desc">${p.desc}</div>
+                </div>
+                <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="portal-link">${btnLabel}</a>
+            </div>
+        `).join('');
     }
 
-    document.getElementById('jobQuery').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') executeJobSearch();
-    });
-    document.getElementById('jobCity').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') executeJobSearch();
-    });
-
-    function showAlert(msg, isSuccess) {
-        const el = document.getElementById('revAlert');
-        el.textContent = msg;
-        el.className = 'alert-msg ' + (isSuccess ? 'alert-success' : 'alert-error');
-        el.style.display = 'block';
-    }
-
-    async function submitReview(e) {
-        e.preventDefault();
-        if (document.getElementById('website_hp').value !== '') return;
-
-        const lastSubmit = localStorage.getItem('jobiq_last_rev');
-        if (lastSubmit && (Date.now() - parseInt(lastSubmit)) < 60000) {
-            showAlert('Te rugăm să aștepți 1 minut înainte de a trimite o altă recenzie.', false);
-            return;
-        }
-
-        const author = document.getElementById('revAuthor').value.trim();
-        const phone = document.getElementById('revPhone').value.replace(/\s+/g, '');
+    async function submitReview() {
         const company = document.getElementById('revCompany').value.trim();
-        const city = document.getElementById('revCity').value.trim();
-        const rating = parseInt(document.getElementById('revRating').value);
+        const rating = parseInt(document.getElementById('revRating').value, 10);
+        const author = document.getElementById('revAuthor').value.trim();
+        const phone = document.getElementById('revPhone').value.trim();
         const comment = document.getElementById('revComment').value.trim();
+        const alertBox = document.getElementById('reviewAlert');
 
-        if (!/^(\+?[0-9]{9,15})$/.test(phone)) {
-            showAlert('Te rugăm să introduci un număr de telefon valid (ex: 0740123456 sau +36...).', false);
+        if (!company || !author || !phone || !comment) {
+            alertBox.className = 'alert error';
+            alertBox.textContent = 'Te rugăm să completezi toate câmpurile obligatorii.';
             return;
         }
 
-        if (!db) {
-            showAlert('Conexiunea la baza de date nu este configurată încă.', false);
+        const phoneClean = phone.replace(/[\s\-\(\)]/g, '');
+        const validPhone = /^(\+?40|0)[237]\d{8}$/.test(phoneClean) || /^(\+?36|06)\d{8,9}$/.test(phoneClean);
+        if (!validPhone) {
+            alertBox.className = 'alert error';
+            alertBox.textContent = 'Te rugăm să introduci un număr de telefon valid (România sau Ungaria).';
             return;
         }
 
-        const btn = document.getElementById('btnSubmitRev');
-        btn.disabled = true;
-        btn.textContent = 'Se trimite...';
+        if (!supabaseClient) {
+            alertBox.className = 'alert error';
+            alertBox.textContent = 'Eroare de conexiune la baza de date. Încearcă din nou.';
+            return;
+        }
 
-        const { error } = await db.from('recenzii').insert([{
-            nume_autor: author,
-            companie: company,
-            oras: city,
-            nota: rating,
-            comentariu: comment,
-            telefon_verificat: phone,
-            aprobat: false
+        const { error } = await supabaseClient.from('reviews').insert([{
+            company_name: company,
+            rating: rating,
+            author_name: author,
+            phone: phoneClean,
+            comment: comment,
+            approved: false
         }]);
 
-        btn.disabled = false;
-        btn.textContent = 'Trimite Recenzia spre Verificare';
-
         if (error) {
-            showAlert('A apărut o eroare la trimitere: ' + error.message, false);
+            alertBox.className = 'alert error';
+            alertBox.textContent = 'Nu s-a putut trimite recenzia: ' + error.message;
         } else {
-            localStorage.setItem('jobiq_last_rev', Date.now().toString());
-            document.getElementById('reviewForm').reset();
-            showAlert('Mulțumim! Recenzia ta a fost înregistrată și va fi publicată imediat după verificare.', true);
+            alertBox.className = 'alert success';
+            alertBox.textContent = 'Mulțumim! Recenzia ta a fost trimisă spre verificare și va apărea în scurt timp.';
+            document.getElementById('revCompany').value = '';
+            document.getElementById('revAuthor').value = '';
+            document.getElementById('revPhone').value = '';
+            document.getElementById('revComment').value = '';
         }
     }
 
     async function loadReviews() {
-        const listEl = document.getElementById('reviewsList');
-        if (!db) {
-            listEl.innerHTML = '<p style="color:#64748b;">Baza de date nu este conectată încă.</p>';
+        const listDiv = document.getElementById('reviewsList');
+        if (!supabaseClient) {
+            listDiv.textContent = 'Recenziile nu pot fi încărcate momentan.';
             return;
         }
-        listEl.innerHTML = '<p style="color:#64748b;">Se încarcă recenziile...</p>';
 
-        const { data, error } = await db
-            .from('recenzii')
-            .select('nume_autor, companie, oras, nota, comentariu, created_at')
-            .eq('aprobat', true)
+        const { data, error } = await supabaseClient
+            .from('reviews')
+            .select('company_name, rating, author_name, comment, created_at')
+            .eq('approved', true)
             .order('created_at', { ascending: false })
-            .limit(30);
+            .limit(20);
 
-        if (error) {
-            listEl.innerHTML = '<p style="color:#dc2626;">Eroare la încărcarea recenziilor.</p>';
+        if (error || !data || data.length === 0) {
+            listDiv.innerHTML = '<p style="color:#64748b;font-size:0.9rem;">Încă nu există recenzii aprobate. Fii primul care lasă o părere!</p>';
             return;
         }
 
-        if (!data || data.length === 0) {
-            listEl.innerHTML = '<p style="color:#64748b;">Nu există încă recenzii aprobate. Fii primul care adaugă una!</p>';
-            return;
-        }
-
-        listEl.innerHTML = data.map(r => {
-            const stars = '★'.repeat(r.nota) + '☆'.repeat(5 - r.nota);
-            const dateStr = new Date(r.created_at).toLocaleDateString('ro-RO');
-            return `
-                <div class="review-item">
-                    <div class="review-header">
-                        <span class="review-company">${escapeHtml(r.companie)} — ${escapeHtml(r.oras)}</span>
-                        <span class="badge-verified">✔ Verificat telefonic</span>
-                    </div>
-                    <div class="review-meta">Autor: <strong>${escapeHtml(r.nume_autor)}</strong> • <span class="stars">${stars}</span> • ${dateStr}</div>
-                    <p style="font-size:0.95rem; color:#334155;">${escapeHtml(r.comentariu)}</p>
+        listDiv.innerHTML = data.map(r => `
+            <div class="review-item">
+                <div class="review-header">
+                    <span class="review-company">${escapeHtml(r.company_name)}</span>
+                    <span class="review-stars">${'⭐'.repeat(r.rating || 5)}</span>
                 </div>
-            `;
-        }).join('');
+                <div class="review-meta">De ${escapeHtml(r.author_name)} • ${new Date(r.created_at).toLocaleDateString('ro-RO')}</div>
+                <div class="review-text">${escapeHtml(r.comment)}</div>
+            </div>
+        `).join('');
     }
 
-    function escapeHtml(text) {
-        if (!text) return '';
-        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     }
 
-    function setLang(lang, btn) {
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const dict = {
-            ro: {
-                heroTitle: 'JobiQ - Cariera ta, fără compromisuri',
-                heroSub: 'Găsește direct anunțuri individuale de angajare și citește recenzii verificate despre angajatori.',
-                tabJobs: 'Caută Joburi',
-                tabRev: 'Recenzii Angajatori',
-                tabGdpr: 'GDPR & Confidențialitate',
-                searchTitle: 'Căutare Directă Anunțuri Individuale',
-                lblJob: 'Funcție / Meserie',
-                lblCity: 'Oraș',
-                lblType: 'Program de lucru',
-                lblCountry: 'Țara căutării',
-                btnSearch: 'Caută',
-                revTitle: 'Recenzii Verificate Angajatori',
-                lblRevAuthor: 'Nume și Prenume *',
-                lblRevPhone: 'Număr de telefon (pentru verificare, nu se afișează public) *',
-                lblRevCompany: 'Numele Companiei *',
-                lblRevCity: 'Orașul *',
-                lblRevRating: 'Notă acordată *',
-                lblRevComment: 'Experiența ta la acest angajator *',
-                lblGdprCheck: 'Confirm că recenzia este reală și sunt de acord cu verificarea telefonică conform politicii GDPR.',
-                btnSubmitRev: 'Trimite Recenzia spre Verificare',
-                revRecentTitle: 'Recenzii Aprobate Recent',
-                gdprTitle: 'Politică GDPR & Protecția Datelor',
-                gdprP1: '1. Ce date colectăm: Platforma JobiQ nu solicită crearea unui cont pentru căutarea anunțurilor de angajare. Pentru publicarea unei recenzii, colectăm numele, orașul, numele angajatorului și un număr de telefon utilizat exclusiv pentru verificarea autenticității.',
-                gdprP2: '2. Confidențialitatea numărului de telefon: Numărul de telefon este protejat la nivel de bază de date (Row Level Security) și nu este afișat public niciodată pe site.',
-                gdprP3: '3. Moderare și dreptul la ștergere: Toate recenziile sunt verificate manual înainte de publicare. Pentru modificarea sau ștergerea unei recenzii, precum și pentru colaborări comerciale, ne poți contacta direct mai jos.',
-                gdprContactText: 'Contact Oficial & Colaborări:'
-            },
-            en: {
-                heroTitle: 'JobiQ - Your career, without compromise',
-                heroSub: 'Find direct individual job listings and read verified employer reviews.',
-                tabJobs: 'Search Jobs',
-                tabRev: 'Employer Reviews',
-                tabGdpr: 'GDPR & Privacy',
-                searchTitle: 'Direct Individual Job Search',
-                lblJob: 'Role / Position',
-                lblCity: 'City',
-                lblType: 'Work Schedule',
-                lblCountry: 'Search Country',
-                btnSearch: 'Search',
-                revTitle: 'Verified Employer Reviews',
-                lblRevAuthor: 'Full Name *',
-                lblRevPhone: 'Phone number (for verification, never shown publicly) *',
-                lblRevCompany: 'Company Name *',
-                lblRevCity: 'City *',
-                lblRevRating: 'Rating *',
-                lblRevComment: 'Your experience with this employer *',
-                lblGdprCheck: 'I confirm this review is genuine and agree to phone verification under GDPR.',
-                btnSubmitRev: 'Submit Review for Verification',
-                revRecentTitle: 'Recently Approved Reviews',
-                gdprTitle: 'GDPR & Data Protection Policy',
-                gdprP1: '1. Data we collect: JobiQ does not require an account to search jobs. To submit a review, we collect your name, city, employer name, and a phone number used strictly for verification.',
-                gdprP2: '2. Phone privacy: Your phone number is protected via Row Level Security and is never displayed publicly on the website.',
-                gdprP3: '3. Moderation & right to erasure: All reviews are manually verified before publishing. To edit or delete a review, or for business inquiries, contact us below.',
-                gdprContactText: 'Official Contact & Partnerships:'
-            },
-            hu: {
-                heroTitle: 'JobiQ - Karriered kompromisszumok nélkül',
-                heroSub: 'Keress közvetlen álláshirdetéseket és olvass ellenőrzött munkáltatói véleményeket.',
-                tabJobs: 'Álláskeresés',
-                tabRev: 'Munkáltatói vélemények',
-                tabGdpr: 'GDPR és Adatvédelem',
-                searchTitle: 'Közvetlen egyéni álláskeresés',
-                lblJob: 'Munkakör / Szakma',
-                lblCity: 'Város',
-                lblType: 'Munkaidő',
-                lblCountry: 'Keresés országa',
-                btnSearch: 'Keresés',
-                revTitle: 'Ellenőrzött munkáltatói vélemények',
-                lblRevAuthor: 'Teljes név *',
-                lblRevPhone: 'Telefonszám (ellenőrzéshez, nyilvánosan nem jelenik meg) *',
-                lblRevCompany: 'Cég neve *',
-                lblRevCity: 'Város *',
-                lblRevRating: 'Értékelés *',
-                lblRevComment: 'Tapasztalatod ennél a munkáltatónál *',
-                lblGdprCheck: 'Igazolom, hogy a vélemény valós, és hozzájárulok a telefonos ellenőrzéshez a GDPR szerint.',
-                btnSubmitRev: 'Vélemény beküldése ellenőrzésre',
-                revRecentTitle: 'Legutóbb jóváhagyott vélemények',
-                gdprTitle: 'GDPR és Adatvédelmi Szabályzat',
-                gdprP1: '1. Gyűjtött adatok: A JobiQ nem igényel regisztrációt az álláskereséshez. Vélemény beküldéséhez a nevet, várost, munkáltató nevét és kizárólag hitelesítésre szolgáló telefonszámot kérünk.',
-                gdprP2: '2. Telefonszám védelme: A telefonszám adatbázis-szinten (Row Level Security) védett, és soha nem jelenik meg nyilvánosan az oldalon.',
-                gdprP3: '3. Moderálás és törlési jog: Minden véleményt manuálisan ellenőrzünk közzététel előtt. Vélemény módosításához, törléséhez vagy üzleti együttműködéshez lépj kapcsolatba velünk alább.',
-                gdprContactText: 'Hivatalos kapcsolat és együttműködés:'
-            }
-        };
-        const t = dict[lang];
-        document.getElementById('heroTitle').textContent = t.heroTitle;
-        document.getElementById('heroSub').textContent = t.heroSub;
-        document.getElementById('tabBtnJobs').textContent = t.tabJobs;
-        document.getElementById('tabBtnReviews').textContent = t.tabRev;
-        document.getElementById('tabBtnGdpr').textContent = t.tabGdpr;
-        document.getElementById('searchTitle').textContent = t.searchTitle;
-        document.getElementById('lblJob').textContent = t.lblJob;
-        document.getElementById('lblCity').textContent = t.lblCity;
-        document.getElementById('lblType').textContent = t.lblType;
-        document.getElementById('lblCountry').textContent = t.lblCountry;
-        document.getElementById('btnSearch').textContent = t.btnSearch;
-        document.getElementById('revTitle').textContent = t.revTitle;
-        document.getElementById('lblRevAuthor').textContent = t.lblRevAuthor;
-        document.getElementById('lblRevPhone').textContent = t.lblRevPhone;
-        document.getElementById('lblRevCompany').textContent = t.lblRevCompany;
-        document.getElementById('lblRevCity').textContent = t.lblRevCity;
-        document.getElementById('lblRevRating').textContent = t.lblRevRating;
-        document.getElementById('lblRevComment').textContent = t.lblRevComment;
-        document.getElementById('lblGdprCheck').textContent = t.lblGdprCheck;
-        document.getElementById('btnSubmitRev').textContent = t.btnSubmitRev;
-        document.getElementById('revRecentTitle').textContent = t.revRecentTitle;
-        document.getElementById('gdprTitle').textContent = t.gdprTitle;
-        document.getElementById('gdprP1').textContent = t.gdprP1;
-        document.getElementById('gdprP2').textContent = t.gdprP2;
-        document.getElementById('gdprP3').textContent = t.gdprP3;
-        document.getElementById('gdprContactText').textContent = t.gdprContactText;
-    }
+    // Ruleaza o cautare initiala implicita la incarcare
+    window.addEventListener('DOMContentLoaded', () => {
+        runJobSearch();
+    });
 </script>
+
+<!-- Reclame Adsterra: Social Bar + Native Banner -->
 <script data-cfasync="false" src="https://bauval.org/14/bea4ba841fe300b47215feb066885c64"></script>
-<script async fetchpriority="high" data-cfasync="false" src="https://bauval.org/21/418496951eaef8fe7a0813e9eb0d1bd6"></script>
-<div id="container-418496951eaef8fe7a0813e9eb0d1bd6"></div>
+<script async="async" data-cfasync="false" src="//pl26348192.effectiveratecpm.com/bea4ba841fe300b47215feb066885c64/invoke.js"></script>
+<div id="container-bea4ba841fe300b47215feb066885c64"></div>
+
 </body>
 </html>
